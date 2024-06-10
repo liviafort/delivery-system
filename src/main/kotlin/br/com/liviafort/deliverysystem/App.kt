@@ -2,20 +2,23 @@ package br.com.liviafort.deliverysystem
 
 import br.com.liviafort.deliverysystem.domain.client.Customer
 import br.com.liviafort.deliverysystem.domain.client.CustomerServiceImpl
+import br.com.liviafort.deliverysystem.domain.restaurant.Restaurant
+import br.com.liviafort.deliverysystem.domain.restaurant.RestaurantServiceImpl
 
 val clientService = CustomerServiceImpl()
+val restaurantService = RestaurantServiceImpl()
 
 fun main() {
     // input de teclado
     var selectedOption = selectMenuOption()
 
-    while (selectedOption != "4") {
+    while (selectedOption != "5") {
         when (selectedOption) {
             "1" -> {
                 registerNewClient()
             }
             "2" -> {
-                println("Cadastrando restaurante")
+                registerNewRestaurant()
             }
             "3" -> {
                 println("Cadastrando entregador")
@@ -29,6 +32,22 @@ fun main() {
         }
         selectedOption = selectMenuOption()
     }
+}
+
+fun registerNewRestaurant() {
+    println("Cadastrando restaurante")
+    println("Nome:")
+    val name = readln()
+    println("Endereço:")
+    val address = readln()
+    println("Categoria:")
+    val category = readln()
+    println("CNPJ:")
+    val cnpj = readln()
+
+    val restaurant = Restaurant(name = name, address = address, category = category, cnpj = cnpj)
+    restaurantService.create(restaurant)
+    println("Restaurante cadastrado com sucesso")
 }
 
 private fun registerNewClient() {
@@ -50,8 +69,8 @@ private fun selectMenuOption(): String {
     // TODO submenus client (cadastras, listar), restaurante (cadastrar, listar), entregador (cadastrar, listar)
     println("1 - Cadastrar cliente")
     println("2 - Cadastrar restaurante")
-    println("2 - Cadastrar entregador")
-    println("3 - Fazer pedido")
-    println("4 - Sair")
+    println("3 - Cadastrar entregador")
+    println("4 - Fazer pedido")
+    println("5 - Sair")
     return readlnOrNull() ?: "4"
 }
