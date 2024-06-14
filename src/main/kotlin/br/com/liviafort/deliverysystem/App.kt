@@ -2,11 +2,14 @@ package br.com.liviafort.deliverysystem
 
 import br.com.liviafort.deliverysystem.domain.client.Customer
 import br.com.liviafort.deliverysystem.domain.client.CustomerServiceImpl
+import br.com.liviafort.deliverysystem.domain.deliveryman.Deliveryman
+import br.com.liviafort.deliverysystem.domain.deliveryman.DeliverymanServiceImpl
 import br.com.liviafort.deliverysystem.domain.restaurant.Restaurant
 import br.com.liviafort.deliverysystem.domain.restaurant.RestaurantServiceImpl
 
 val clientService = CustomerServiceImpl()
 val restaurantService = RestaurantServiceImpl()
+val deliverymanService = DeliverymanServiceImpl()
 
 fun main() {
     // input de teclado
@@ -21,7 +24,7 @@ fun main() {
                 registerNewRestaurant()
             }
             "3" -> {
-                println("Cadastrando entregador")
+                registerNewDeliveryman()
             }
             "4" -> {
                 println("Fazendo pedido")
@@ -32,6 +35,20 @@ fun main() {
         }
         selectedOption = selectMenuOption()
     }
+}
+
+fun registerNewDeliveryman() {
+    println("Cadastrando entregador")
+    println("Nome:")
+    val name = readln()
+    println("Telefone:")
+    val phone = readln()
+    println("Veículo:")
+    val vehicle = readln()
+
+    val deliveryman = Deliveryman(name = name, phone = phone, vehicle = vehicle)
+    deliverymanService.create(deliveryman)
+    println("Entregador cadastrado com sucesso")
 }
 
 fun registerNewRestaurant() {
