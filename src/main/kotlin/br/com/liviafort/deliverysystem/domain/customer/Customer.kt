@@ -1,6 +1,6 @@
-package br.com.liviafort.deliverysystem.domain.client
+package br.com.liviafort.deliverysystem.domain.customer
 
-import java.util.UUID
+import java.util.*
 
 data class Customer(
     val id: UUID = UUID.randomUUID(),

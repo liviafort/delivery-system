@@ -8,17 +8,20 @@ class RestaurantMenuOperations {
 
     fun menu() {
         var selectedOption = selectMenuOption()
-        while(true){
+        while (true) {
             when (selectedOption) {
                 "1" -> {
                     registerNewRestaurant()
                 }
+
                 "2" -> {
                     listRestaurants()
                 }
+
                 "3" -> {
                     break;
                 }
+
                 else -> {
                     println("Opção inválida")
                 }

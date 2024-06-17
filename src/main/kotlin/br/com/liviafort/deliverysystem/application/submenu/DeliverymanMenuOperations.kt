@@ -3,23 +3,26 @@ package br.com.liviafort.deliverysystem.application.submenu
 import br.com.liviafort.deliverysystem.domain.deliveryman.Deliveryman
 import br.com.liviafort.deliverysystem.domain.deliveryman.DeliverymanServiceImpl
 
-class DeliverymanMenuOperations{
+class DeliverymanMenuOperations {
     private val deliverymanService = DeliverymanServiceImpl()
 
     fun menu() {
         var selectedOption = selectMenuOption()
 
-        while(true){
+        while (true) {
             when (selectedOption) {
                 "1" -> {
                     registerNewDeliveryman()
                 }
+
                 "2" -> {
                     listDeliverymen()
                 }
+
                 "3" -> {
                     break;
                 }
+
                 else -> {
                     println("Opção inválida")
                 }

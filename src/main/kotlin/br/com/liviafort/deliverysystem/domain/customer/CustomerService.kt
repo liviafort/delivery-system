@@ -1,4 +1,4 @@
-package br.com.liviafort.deliverysystem.domain.client
+package br.com.liviafort.deliverysystem.domain.customer
 
 interface CustomerService {
     fun create(customer: Customer)

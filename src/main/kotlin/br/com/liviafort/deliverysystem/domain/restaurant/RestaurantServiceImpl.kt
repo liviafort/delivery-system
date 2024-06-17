@@ -1,14 +1,17 @@
 package br.com.liviafort.deliverysystem.domain.restaurant
 
-class RestaurantServiceImpl: RestaurantService {
+class RestaurantServiceImpl : RestaurantService {
     private val restaurants = mutableListOf<Restaurant>()
 
     override fun create(restaurant: Restaurant) {
         try {
-            when{
+            when {
                 restaurants.any { it.cnpj == restaurant.cnpj } -> {
-                    throw IllegalArgumentException("CNPJ already registered") }
-                else -> restaurants.add(restaurant)}
+                    throw IllegalArgumentException("CNPJ already registered")
+                }
+
+                else -> restaurants.add(restaurant)
+            }
         } catch (e: IllegalArgumentException) {
             println(e.message)
         }

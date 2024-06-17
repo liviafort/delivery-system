@@ -1,25 +1,29 @@
 package br.com.liviafort.deliverysystem.application.submenu
 
-import br.com.liviafort.deliverysystem.domain.client.Customer
-import br.com.liviafort.deliverysystem.domain.client.CustomerServiceImpl
+import br.com.liviafort.deliverysystem.domain.customer.Customer
+import br.com.liviafort.deliverysystem.domain.customer.CustomerServiceImpl
+import br.com.liviafort.deliverysystem.repository.customer.CustomerRepositoryInMemory
 
 class ClientMenuOperations {
-    private val customerService = CustomerServiceImpl()
+    private val customerService = CustomerServiceImpl(repository = CustomerRepositoryInMemory())
 
     fun menu() {
         var selectedOption = selectMenuOption()
 
-        while(true){
+        while (true) {
             when (selectedOption) {
                 "1" -> {
                     registerNewClient()
                 }
+
                 "2" -> {
                     listClients()
                 }
+
                 "3" -> {
                     break;
                 }
+
                 else -> {
                     println("Opção inválida")
                 }

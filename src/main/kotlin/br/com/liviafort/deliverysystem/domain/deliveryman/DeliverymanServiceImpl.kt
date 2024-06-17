@@ -1,17 +1,19 @@
 package br.com.liviafort.deliverysystem.domain.deliveryman
 
-class DeliverymanServiceImpl: DeliverymanService {
+class DeliverymanServiceImpl : DeliverymanService {
 
     private val deliverymen = mutableListOf<Deliveryman>()
 
     override fun create(deliveryman: Deliveryman) {
-        try{
-            when{
-                deliverymen.any{ it.phone == deliveryman.phone} -> {
-                    throw IllegalArgumentException("Phone already registered") }
+        try {
+            when {
+                deliverymen.any { it.phone == deliveryman.phone } -> {
+                    throw IllegalArgumentException("Phone already registered")
+                }
+
                 else -> deliverymen.add(deliveryman)
             }
-        }catch(e: IllegalArgumentException){
+        } catch (e: IllegalArgumentException) {
             println(e.message)
         }
     }

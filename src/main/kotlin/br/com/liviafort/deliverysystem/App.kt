@@ -3,12 +3,6 @@ package br.com.liviafort.deliverysystem
 import br.com.liviafort.deliverysystem.application.submenu.ClientMenuOperations
 import br.com.liviafort.deliverysystem.application.submenu.DeliverymanMenuOperations
 import br.com.liviafort.deliverysystem.application.submenu.RestaurantMenuOperations
-import br.com.liviafort.deliverysystem.domain.client.Customer
-import br.com.liviafort.deliverysystem.domain.client.CustomerServiceImpl
-import br.com.liviafort.deliverysystem.domain.deliveryman.Deliveryman
-import br.com.liviafort.deliverysystem.domain.deliveryman.DeliverymanServiceImpl
-import br.com.liviafort.deliverysystem.domain.restaurant.Restaurant
-import br.com.liviafort.deliverysystem.domain.restaurant.RestaurantServiceImpl
 
 val restaurantMenu = RestaurantMenuOperations()
 val clientMenu = ClientMenuOperations()
@@ -23,15 +17,19 @@ fun main() {
             "1" -> {
                 clientMenu.menu()
             }
+
             "2" -> {
                 restaurantMenu.menu()
             }
+
             "3" -> {
                 deliverymanMenu.menu()
             }
+
             "4" -> {
                 println("Fazendo pedido")
             }
+
             else -> {
                 println("Opção inválida")
             }

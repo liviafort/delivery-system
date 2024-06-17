@@ -1,6 +1,6 @@
 package br.com.liviafort.deliverysystem.domain.restaurant
 
-import java.util.UUID
+import java.util.*
 
 data class Restaurant(
     val id: UUID = UUID.randomUUID(),
@@ -8,7 +8,7 @@ data class Restaurant(
     val address: String,
     val category: String,
     val cnpj: String,
-){
+) {
     init {
         require(name.isNotBlank()) { "Name must not be blank" }
         require(address.isNotBlank()) { "Address must not be blank" }
