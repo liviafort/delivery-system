@@ -42,8 +42,6 @@ class CustomerServiceImplTest {
 
         // When
         assertThrows<EntityAlreadyExistsException> { service.create(customer) }
-
-
     }
 
 }
