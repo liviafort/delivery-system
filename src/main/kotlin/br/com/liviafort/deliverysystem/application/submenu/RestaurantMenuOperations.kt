@@ -2,9 +2,10 @@ package br.com.liviafort.deliverysystem.application.submenu
 
 import br.com.liviafort.deliverysystem.domain.restaurant.Restaurant
 import br.com.liviafort.deliverysystem.domain.restaurant.RestaurantServiceImpl
+import br.com.liviafort.deliverysystem.repository.restaurant.RestaurantRepositoryInMemory
 
 class RestaurantMenuOperations {
-    private val restaurantService = RestaurantServiceImpl()
+    private val restaurantService = RestaurantServiceImpl(repository = RestaurantRepositoryInMemory())
 
     fun menu() {
         var selectedOption = selectMenuOption()
@@ -19,7 +20,7 @@ class RestaurantMenuOperations {
                 }
 
                 "3" -> {
-                    break;
+                    break
                 }
 
                 else -> {

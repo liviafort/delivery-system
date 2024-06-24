@@ -8,6 +8,8 @@ import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class CustomerServiceImplTest {
     private lateinit var service: CustomerServiceImpl
@@ -42,6 +44,37 @@ class CustomerServiceImplTest {
 
         // When
         assertThrows<EntityAlreadyExistsException> { service.create(customer) }
+    }
+
+    @Test
+    fun `should list all customers`() {
+        //Given
+        val customers = listOf(
+            Customer(name = "livia", phone = "12345678", address = "Miguel Seabra, 324"),
+            Customer(name = "joao", phone = "921749124", address = "Aluisio Mendes, 324")
+        )
+
+        every { repository.findAll() } returns customers
+
+        //When
+        val result = service.listing()
+
+        //Then
+        verify { repository.findAll() }
+        assertEquals(customers, result)
+    }
+
+    @Test
+    fun `should return empty list when no customer exist`() {
+        //Given
+        every { repository.findAll() } returns emptyList()
+
+        //When
+        val result = service.listing()
+
+        //Then
+        verify { repository.findAll() }
+        assertTrue { result.isEmpty() }
     }
 
 }

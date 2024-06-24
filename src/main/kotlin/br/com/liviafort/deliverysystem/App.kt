@@ -2,11 +2,13 @@ package br.com.liviafort.deliverysystem
 
 import br.com.liviafort.deliverysystem.application.submenu.ClientMenuOperations
 import br.com.liviafort.deliverysystem.application.submenu.DeliverymanMenuOperations
+import br.com.liviafort.deliverysystem.application.submenu.OrderMenuOperations
 import br.com.liviafort.deliverysystem.application.submenu.RestaurantMenuOperations
 
 val restaurantMenu = RestaurantMenuOperations()
 val clientMenu = ClientMenuOperations()
 val deliverymanMenu = DeliverymanMenuOperations()
+val orderMenu = OrderMenuOperations()
 
 fun main() {
     // input de teclado
@@ -27,7 +29,7 @@ fun main() {
             }
 
             "4" -> {
-                println("Fazendo pedido")
+                orderMenu.menu()
             }
 
             else -> {

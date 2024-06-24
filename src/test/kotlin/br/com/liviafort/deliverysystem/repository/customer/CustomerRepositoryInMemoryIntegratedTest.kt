@@ -38,4 +38,21 @@ class CustomerRepositoryInMemoryIntegratedTest {
         repository.save(customer)
         assertThrows<EntityAlreadyExistsException> { repository.save(customer2) }
     }
+
+    @Test
+    fun `should return all customers`() {
+        // Given
+        val customer = Customer(name = "Ze", phone = "123456", address = "São João, 45")
+        val customer2 = Customer(name = "Janilde", phone = "12345678", address = "São João, 45")
+
+        repository.save(customer)
+        repository.save(customer2)
+
+        // When
+        val customers = repository.findAll()
+
+        // Then
+        assertEquals(2, customers.size)
+        assertTrue(customers.containsAll(listOf(customer, customer2)))
+    }
 }

@@ -2,5 +2,5 @@ package br.com.liviafort.deliverysystem.domain.restaurant
 
 interface RestaurantService {
     fun create(restaurant: Restaurant)
-    fun listing()
+    fun listing(): List<Restaurant>
 }

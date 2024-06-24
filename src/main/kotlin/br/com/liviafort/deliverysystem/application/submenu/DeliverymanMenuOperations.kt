@@ -2,9 +2,10 @@ package br.com.liviafort.deliverysystem.application.submenu
 
 import br.com.liviafort.deliverysystem.domain.deliveryman.Deliveryman
 import br.com.liviafort.deliverysystem.domain.deliveryman.DeliverymanServiceImpl
+import br.com.liviafort.deliverysystem.repository.deliveryman.DeliverymanRepositoryInMemory
 
 class DeliverymanMenuOperations {
-    private val deliverymanService = DeliverymanServiceImpl()
+    private val deliverymanService = DeliverymanServiceImpl(repository = DeliverymanRepositoryInMemory())
 
     fun menu() {
         var selectedOption = selectMenuOption()
@@ -20,7 +21,7 @@ class DeliverymanMenuOperations {
                 }
 
                 "3" -> {
-                    break;
+                    break
                 }
 
                 else -> {
