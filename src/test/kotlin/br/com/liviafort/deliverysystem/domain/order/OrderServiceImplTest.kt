@@ -8,7 +8,6 @@ import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.util.*
 
 class OrderServiceImplTest{
     private lateinit var repository: OrderRepository
@@ -24,7 +23,6 @@ class OrderServiceImplTest{
     fun `should create order`() {
         // Given
         val order = Order(
-            id = UUID.randomUUID(),
             items = listOf(OrderItem(productId = "pizza quatro queijos", quantity = 2, price = 47.90)),
             trackingCode = "track123",
             totalPrice = 95.80,
@@ -43,7 +41,6 @@ class OrderServiceImplTest{
     fun `should not save order when there is a conflict`() {
         // Given
         val order = Order(
-            id = UUID.randomUUID(),
             items = listOf(OrderItem(productId = "pizza quatro queijos", quantity = 2, price = 47.90)),
             trackingCode = "track123",
             totalPrice = 95.80,
@@ -55,10 +52,35 @@ class OrderServiceImplTest{
     }
 
     @Test
+    fun `should return all orders`() {
+        // Given
+        val orders = listOf(
+            Order(
+                items = listOf(OrderItem(productId = "pizza quatro queijos", quantity = 2, price = 47.90)),
+                trackingCode = "track123",
+                totalPrice = 95.80,
+            ),
+            Order(
+                items = listOf(OrderItem(productId = "pizza quatro queijos", quantity = 2, price = 47.90)),
+                trackingCode = "track34729",
+                totalPrice = 95.80,
+            ),
+        )
+
+        every { repository.findAll() } returns orders
+
+        //When
+        val result = service.listing()
+
+        //Then
+        verify { repository.findAll() }
+        kotlin.test.assertEquals(orders, result)
+    }
+
+    @Test
     fun `should cancel order`() {
         // Given
         val order = Order(
-            id = UUID.randomUUID(),
             items = listOf(OrderItem(productId = "pizza quatro queijos", quantity = 2, price = 47.90)),
             trackingCode = "track123",
             totalPrice = 95.80,

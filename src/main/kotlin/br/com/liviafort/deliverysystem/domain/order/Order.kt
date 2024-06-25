@@ -3,7 +3,7 @@ package br.com.liviafort.deliverysystem.domain.order
 import java.util.UUID
 
 data class Order(
-    val id: UUID,
+    val id: UUID = UUID.randomUUID(),
     val items: List<OrderItem>,
     val trackingCode: String,
     val totalPrice: Double,
@@ -19,4 +19,3 @@ data class OrderItem(
     val quantity: Int,
     val price: Double
 )
-
