@@ -5,7 +5,6 @@ import br.com.liviafort.deliverysystem.domain.order.OrderItem
 import br.com.liviafort.deliverysystem.domain.order.OrderServiceImpl
 import br.com.liviafort.deliverysystem.repository.order.OrderRepositoryInMemory
 import java.util.*
-import kotlin.random.Random
 
 
 class OrderMenuOperations {
@@ -76,7 +75,6 @@ class OrderMenuOperations {
         val order = Order(
             id = UUID.randomUUID(),
             items = items,
-            trackingCode = List(10) { Random.nextInt(0, 10) }.joinToString(""),
             totalPrice = totalPrice,
         )
         orderService.create(order)

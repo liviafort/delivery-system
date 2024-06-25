@@ -8,6 +8,7 @@ import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import kotlin.test.assertEquals
 
 class OrderServiceImplTest{
     private lateinit var repository: OrderRepository
@@ -24,7 +25,6 @@ class OrderServiceImplTest{
         // Given
         val order = Order(
             items = listOf(OrderItem(productId = "pizza quatro queijos", quantity = 2, price = 47.90)),
-            trackingCode = "track123",
             totalPrice = 95.80,
         )
 
@@ -42,7 +42,6 @@ class OrderServiceImplTest{
         // Given
         val order = Order(
             items = listOf(OrderItem(productId = "pizza quatro queijos", quantity = 2, price = 47.90)),
-            trackingCode = "track123",
             totalPrice = 95.80,
         )
         every { repository.save(order) } throws EntityAlreadyExistsException("Order already exists")
@@ -57,12 +56,10 @@ class OrderServiceImplTest{
         val orders = listOf(
             Order(
                 items = listOf(OrderItem(productId = "pizza quatro queijos", quantity = 2, price = 47.90)),
-                trackingCode = "track123",
                 totalPrice = 95.80,
             ),
             Order(
                 items = listOf(OrderItem(productId = "pizza quatro queijos", quantity = 2, price = 47.90)),
-                trackingCode = "track34729",
                 totalPrice = 95.80,
             ),
         )
@@ -74,7 +71,7 @@ class OrderServiceImplTest{
 
         //Then
         verify { repository.findAll() }
-        kotlin.test.assertEquals(orders, result)
+        assertEquals(orders, result)
     }
 
     @Test
@@ -82,7 +79,6 @@ class OrderServiceImplTest{
         // Given
         val order = Order(
             items = listOf(OrderItem(productId = "pizza quatro queijos", quantity = 2, price = 47.90)),
-            trackingCode = "track123",
             totalPrice = 95.80,
         )
 

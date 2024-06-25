@@ -15,7 +15,6 @@ class OrderRepositoryInMemoryTest {
         //Given
         val order = Order(
             items = listOf(OrderItem(productId = "hamburguer", quantity = 1, price = 47.90)),
-            trackingCode = "239423",
             totalPrice = 95.80,
         )
 
@@ -38,7 +37,6 @@ class OrderRepositoryInMemoryTest {
         // Given
         val order = Order(
             items = listOf(OrderItem(productId = "pizza quatro queijos", quantity = 2, price = 47.90)),
-            trackingCode = "track123",
             totalPrice = 95.80,
         )
 
@@ -52,13 +50,11 @@ class OrderRepositoryInMemoryTest {
         // Given
         val order1 = Order(
             items = listOf(OrderItem(productId = "pizza quatro queijos", quantity = 2, price = 47.90)),
-            trackingCode = "track123",
             totalPrice = 95.80,
         )
 
         val order2 = Order(
             items = listOf(OrderItem(productId = "lasagna", quantity = 1, price = 25.50)),
-            trackingCode = "track456",
             totalPrice = 25.50,
         )
 
@@ -78,7 +74,6 @@ class OrderRepositoryInMemoryTest {
         // Given
         val order = Order(
             items = listOf(OrderItem(productId = "pizza quatro queijos", quantity = 2, price = 47.90)),
-            trackingCode = "83920343",
             totalPrice = 95.80,
         )
         repository.save(order)

@@ -21,6 +21,5 @@ class OrderRepositoryInMemory : OrderRepository {
         if(!orders.containsKey(trackingCode))
             throw EntityAlreadyExistsException("Order ($trackingCode) don't exist")
         orders.remove(trackingCode)
-
     }
 }
