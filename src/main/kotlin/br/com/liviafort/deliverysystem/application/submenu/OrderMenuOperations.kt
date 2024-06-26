@@ -70,12 +70,9 @@ class OrderMenuOperations {
             return
         }
 
-        val totalPrice = items.sumOf { it.quantity * it.price }
-
         val order = Order(
             id = UUID.randomUUID(),
             items = items,
-            totalPrice = totalPrice,
         )
         orderService.create(order)
         println("Pedido feito com sucesso")

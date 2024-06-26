@@ -16,3 +16,5 @@ data class Restaurant(
         require(cnpj.isNotBlank()) { "CNPJ must not be blank" }
     }
 }
+
+

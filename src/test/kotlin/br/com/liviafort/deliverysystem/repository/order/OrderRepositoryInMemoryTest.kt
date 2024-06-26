@@ -1,6 +1,7 @@
 package br.com.liviafort.deliverysystem.repository.order
 
 import br.com.liviafort.deliverysystem.domain.exception.EntityAlreadyExistsException
+import br.com.liviafort.deliverysystem.domain.exception.EntityNotFoundException
 import br.com.liviafort.deliverysystem.domain.order.Order
 import br.com.liviafort.deliverysystem.domain.order.OrderItem
 import org.junit.jupiter.api.Assertions.*
@@ -11,11 +12,10 @@ class OrderRepositoryInMemoryTest {
     private val repository = OrderRepositoryInMemory()
 
     @Test
-    fun `should persist a order`(){
+    fun `should persist a order`() {
         //Given
         val order = Order(
             items = listOf(OrderItem(productId = "hamburguer", quantity = 1, price = 47.90)),
-            totalPrice = 95.80,
         )
 
         //When
@@ -37,7 +37,6 @@ class OrderRepositoryInMemoryTest {
         // Given
         val order = Order(
             items = listOf(OrderItem(productId = "pizza quatro queijos", quantity = 2, price = 47.90)),
-            totalPrice = 95.80,
         )
 
         // When
@@ -50,12 +49,10 @@ class OrderRepositoryInMemoryTest {
         // Given
         val order1 = Order(
             items = listOf(OrderItem(productId = "pizza quatro queijos", quantity = 2, price = 47.90)),
-            totalPrice = 95.80,
         )
 
         val order2 = Order(
             items = listOf(OrderItem(productId = "lasagna", quantity = 1, price = 25.50)),
-            totalPrice = 25.50,
         )
 
         repository.save(order1)
@@ -74,7 +71,6 @@ class OrderRepositoryInMemoryTest {
         // Given
         val order = Order(
             items = listOf(OrderItem(productId = "pizza quatro queijos", quantity = 2, price = 47.90)),
-            totalPrice = 95.80,
         )
         repository.save(order)
 
@@ -88,7 +84,7 @@ class OrderRepositoryInMemoryTest {
 
     @Test
     fun `should fail when removing non-existent order`() {
-        assertThrows<EntityAlreadyExistsException> { repository.remove("nonExistentTrackCode") }
+        assertThrows<EntityNotFoundException> { repository.remove("nonExistentTrackCode") }
     }
 
 }
