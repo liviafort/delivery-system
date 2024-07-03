@@ -1,6 +1,7 @@
 package br.com.liviafort.deliverysystem.application.submenu
 
 import br.com.liviafort.deliverysystem.domain.restaurant.Restaurant
+import br.com.liviafort.deliverysystem.domain.restaurant.RestaurantItem
 import br.com.liviafort.deliverysystem.domain.restaurant.RestaurantServiceImpl
 import br.com.liviafort.deliverysystem.repository.restaurant.RestaurantRepositoryInMemory
 
@@ -44,6 +45,19 @@ class RestaurantMenuOperations {
         restaurantService.listing()
     }
 
+    private fun addItemsToRestaurant(items: MutableSet<RestaurantItem>) {
+        do {
+            println("Nome do item:")
+            val itemName = readln()
+            println("Preço do item:")
+            val itemPrice = readln().toDouble()
+            items.add(RestaurantItem(name = itemName, price = itemPrice))
+            println("Item adicionado. Deseja adicionar outro item (s/n)?")
+            val answer = readln()
+        } while (answer.lowercase() == "s")
+
+    }
+
     private fun registerNewRestaurant() {
         println("Cadastrando restaurante")
         println("Nome:")
@@ -55,8 +69,17 @@ class RestaurantMenuOperations {
         println("CNPJ:")
         val cnpj = readln()
 
-        val restaurant = Restaurant(name = name, address = address, category = category, cnpj = cnpj)
-        restaurantService.create(restaurant)
-        println("Restaurante cadastrado com sucesso")
+        val items = mutableSetOf<RestaurantItem>()
+        println("Por favor, adicione pelo menos um item ao menu.")
+        addItemsToRestaurant(items)
+
+        val restaurant = Restaurant(name = name, address = address, category = category, cnpj = cnpj, items = items)
+        try {
+            restaurantService.create(restaurant)
+            println("Restaurante cadastrado com sucesso")
+        } catch (e: IllegalArgumentException) {
+            println(e.message)
+        }
     }
+
 }

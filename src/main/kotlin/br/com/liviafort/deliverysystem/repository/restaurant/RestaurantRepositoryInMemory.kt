@@ -2,6 +2,7 @@ package br.com.liviafort.deliverysystem.repository.restaurant
 
 import br.com.liviafort.deliverysystem.domain.exception.EntityAlreadyExistsException
 import br.com.liviafort.deliverysystem.domain.restaurant.Restaurant
+import br.com.liviafort.deliverysystem.domain.restaurant.RestaurantItem
 import br.com.liviafort.deliverysystem.domain.restaurant.RestaurantRepository
 
 class RestaurantRepositoryInMemory: RestaurantRepository {
@@ -16,5 +17,9 @@ class RestaurantRepositoryInMemory: RestaurantRepository {
 
     override fun findAll(): List<Restaurant> {
         return restaurants.values.toList()
+    }
+
+    override fun insertItem(restaurant: Restaurant,restaurantItem: RestaurantItem) {
+        restaurant.items.add(restaurantItem)
     }
 }

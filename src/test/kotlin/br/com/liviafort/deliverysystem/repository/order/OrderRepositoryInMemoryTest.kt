@@ -1,9 +1,13 @@
 package br.com.liviafort.deliverysystem.repository.order
 
+import br.com.liviafort.deliverysystem.domain.customer.Customer
 import br.com.liviafort.deliverysystem.domain.exception.EntityAlreadyExistsException
 import br.com.liviafort.deliverysystem.domain.exception.EntityNotFoundException
 import br.com.liviafort.deliverysystem.domain.order.Order
 import br.com.liviafort.deliverysystem.domain.order.OrderItem
+import br.com.liviafort.deliverysystem.domain.restaurant.Restaurant
+import br.com.liviafort.deliverysystem.domain.restaurant.RestaurantItem
+import io.mockk.mockk
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -14,8 +18,12 @@ class OrderRepositoryInMemoryTest {
     @Test
     fun `should persist a order`() {
         //Given
+        val mockCustomer = mockk<Customer>()
+        val mockRestaurant = mockk<Restaurant>()
         val order = Order(
-            items = listOf(OrderItem(productId = "hamburguer", quantity = 1, price = 47.90)),
+            items = listOf(OrderItem(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60), quantity = 2)),
+            customer = mockCustomer,
+            restaurant = mockRestaurant,
         )
 
         //When
@@ -35,8 +43,12 @@ class OrderRepositoryInMemoryTest {
     @Test
     fun `should fail when a order already exist`() {
         // Given
+        val mockCustomer = mockk<Customer>()
+        val mockRestaurant = mockk<Restaurant>()
         val order = Order(
-            items = listOf(OrderItem(productId = "pizza quatro queijos", quantity = 2, price = 47.90)),
+            items = listOf(OrderItem(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60), quantity = 2)),
+            customer = mockCustomer,
+            restaurant = mockRestaurant,
         )
 
         // When
@@ -47,12 +59,18 @@ class OrderRepositoryInMemoryTest {
     @Test
     fun `should return all orders`() {
         // Given
+        val mockCustomer = mockk<Customer>()
+        val mockRestaurant = mockk<Restaurant>()
         val order1 = Order(
-            items = listOf(OrderItem(productId = "pizza quatro queijos", quantity = 2, price = 47.90)),
+            items = listOf(OrderItem(RestaurantItem(name = "Macarrão manjericão", price = 49.60), quantity = 2)),
+            customer = mockCustomer,
+            restaurant = mockRestaurant,
         )
 
         val order2 = Order(
-            items = listOf(OrderItem(productId = "lasagna", quantity = 1, price = 25.50)),
+            items = listOf(OrderItem(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60), quantity = 2)),
+            customer = mockCustomer,
+            restaurant = mockRestaurant,
         )
 
         repository.save(order1)
@@ -69,8 +87,12 @@ class OrderRepositoryInMemoryTest {
     @Test
     fun `should remove an order`() {
         // Given
+        val mockCustomer = mockk<Customer>()
+        val mockRestaurant = mockk<Restaurant>()
         val order = Order(
-            items = listOf(OrderItem(productId = "pizza quatro queijos", quantity = 2, price = 47.90)),
+            items = listOf(OrderItem(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60), quantity = 2)),
+            customer = mockCustomer,
+            restaurant = mockRestaurant,
         )
         repository.save(order)
 
@@ -86,5 +108,41 @@ class OrderRepositoryInMemoryTest {
     fun `should fail when removing non-existent order`() {
         assertThrows<EntityNotFoundException> { repository.remove("nonExistentTrackCode") }
     }
+
+    @Test
+    fun `should correctly calculate the total price`() {
+        //Given
+        val mockCustomer = mockk<Customer>()
+        val mockRestaurant = mockk<Restaurant>()
+        val order = Order(
+            items = listOf(OrderItem(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60), quantity = 2)),
+            customer = mockCustomer,
+            restaurant = mockRestaurant,
+        )
+        repository.save(order)
+
+        //Then
+        val calculatePrice: Double = order.items.sumOf { it.quantity * it.restaurantItem.price }
+        assertEquals(order.totalPrice, calculatePrice)
+    }
+
+    @Test
+    fun `should have ten characters in the tracking code`() {
+        //Given
+        val mockCustomer = mockk<Customer>()
+        val mockRestaurant = mockk<Restaurant>()
+        val order = Order(
+            items = listOf(OrderItem(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60), quantity = 2)),
+            customer = mockCustomer,
+            restaurant = mockRestaurant,
+        )
+        repository.save(order)
+
+        //Then
+        val trackingCode: Int = order.trackingCode.length
+        assertEquals(10, trackingCode)
+    }
+
+
 
 }

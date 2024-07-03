@@ -1,11 +1,8 @@
 package br.com.liviafort.deliverysystem.application.submenu
 
-import br.com.liviafort.deliverysystem.domain.order.Order
 import br.com.liviafort.deliverysystem.domain.order.OrderItem
 import br.com.liviafort.deliverysystem.domain.order.OrderServiceImpl
 import br.com.liviafort.deliverysystem.repository.order.OrderRepositoryInMemory
-import java.util.*
-
 
 class OrderMenuOperations {
     private val orderService = OrderServiceImpl(repository = OrderRepositoryInMemory())
@@ -70,11 +67,11 @@ class OrderMenuOperations {
             return
         }
 
-        val order = Order(
+        /*val order = Order(
             id = UUID.randomUUID(),
             items = items,
         )
-        orderService.create(order)
+        orderService.create(order)*/
         println("Pedido feito com sucesso")
     }
 
@@ -92,11 +89,10 @@ class OrderMenuOperations {
             println("Digite o preço unitário:")
             val price = readln().toDouble()
 
-            items.add(OrderItem(productId = productName, quantity = quantity, price = price))
+            /*items.add(OrderItem(productId = productName, quantity = quantity, price = price))*/
 
             println("Produto adicionado ao pedido.")
         }
-
         return items
     }
 }

@@ -24,7 +24,8 @@ class RestaurantServiceImplTest {
     @Test
     fun `should save a restaurant`() {
         //Given
-        val restaurant = Restaurant(name = "Pizzaria Straj", address = "Rua Alemida Junior, 45", category = "Pizzaria", cnpj = "38293/0003-123")
+        val items = mutableSetOf(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60))
+        val restaurant = Restaurant(name = "Pizzaria Arnalds", address = "Rua Mania, 34", cnpj = "123212", category = "Pizzaria", items = items)
 
         justRun { repository.save(restaurant) }
 
@@ -38,7 +39,8 @@ class RestaurantServiceImplTest {
     @Test
     fun `should not save restaurant when there is a conflict`() {
         // Given
-        val restaurant = Restaurant(name = "Pizzaria Straj", address = "Rua Alemida Junior, 45", category = "Pizzaria", cnpj = "38293/0003-123")
+        val items = mutableSetOf(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60))
+        val restaurant = Restaurant(name = "Pizzaria Arnalds", address = "Rua Mania, 34", cnpj = "123212", category = "Pizzaria", items = items)
 
         every { repository.save(restaurant) } throws EntityAlreadyExistsException("Restaurant already exists")
 
@@ -49,9 +51,11 @@ class RestaurantServiceImplTest {
     @Test
     fun `should list all restaurant`() {
         //Given
+        val items1 = mutableSetOf(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60))
+        val items2 = mutableSetOf(RestaurantItem(name = "Double cheese", price = 49.60))
         val restaurant = listOf(
-            Restaurant(name = "Pizzaria Straj", address = "Rua Alemida Junior, 45", category = "Pizzaria", cnpj = "38293/0003-123"),
-            Restaurant(name = "Hamburgueria Aureau", address = "Rua Caimbra, 121", category = "Pizzaria", cnpj = "33493/086786-123")
+            Restaurant(name = "Pizzaria Straj", address = "Rua Alemida Junior, 45", category = "Pizzaria", cnpj = "38293/0003-123", items = items1),
+            Restaurant(name = "Hamburgueria Aureau", address = "Rua Caimbra, 121", category = "Hamburgueria", cnpj = "33493/086786-123", items = items2)
         )
 
         every { repository.findAll() } returns restaurant
@@ -75,6 +79,22 @@ class RestaurantServiceImplTest {
         //Then
         verify { repository.findAll() }
         assertTrue { result.isEmpty() }
+    }
+
+    @Test
+    fun `should add a new item`() {
+        //Given
+        val items = mutableSetOf(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60))
+        val restaurant = Restaurant(name = "Pizzaria Arnalds", address = "Rua Mania, 34", cnpj = "123212", category = "Pizzaria", items = items)
+
+        val mockItem = mockk<RestaurantItem>()
+        justRun { repository.insertItem(restaurant, mockItem) }
+
+        //Then
+        service.addItem(restaurant, mockItem)
+
+        //When
+        verify { repository.insertItem(restaurant, mockItem) }
     }
 
 

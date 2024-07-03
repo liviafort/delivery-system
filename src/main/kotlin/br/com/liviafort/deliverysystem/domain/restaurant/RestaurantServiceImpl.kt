@@ -9,4 +9,8 @@ class RestaurantServiceImpl(private val repository: RestaurantRepository): Resta
     override fun listing(): List<Restaurant> {
         return repository.findAll()
     }
+
+    override fun addItem(restaurant: Restaurant, restaurantItem: RestaurantItem) {
+        repository.insertItem(restaurant, restaurantItem)
+    }
 }

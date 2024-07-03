@@ -1,6 +1,9 @@
 package br.com.liviafort.deliverysystem.domain.order
 
+import br.com.liviafort.deliverysystem.domain.customer.Customer
 import br.com.liviafort.deliverysystem.domain.exception.EntityAlreadyExistsException
+import br.com.liviafort.deliverysystem.domain.restaurant.Restaurant
+import br.com.liviafort.deliverysystem.domain.restaurant.RestaurantItem
 import io.mockk.every
 import io.mockk.justRun
 import io.mockk.mockk
@@ -23,8 +26,12 @@ class OrderServiceImplTest {
     @Test
     fun `should create order`() {
         // Given
+        val mockCustomer = mockk<Customer>()
+        val mockRestaurant = mockk<Restaurant>()
         val order = Order(
-            items = listOf(OrderItem(productId = "pizza quatro queijos", quantity = 2, price = 47.90)),
+            items = listOf(OrderItem(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60), quantity = 2)),
+            customer = mockCustomer,
+            restaurant = mockRestaurant,
         )
 
         justRun { repository.save(order) }
@@ -39,9 +46,14 @@ class OrderServiceImplTest {
     @Test
     fun `should not save order when there is a conflict`() {
         // Given
+        val mockCustomer = mockk<Customer>()
+        val mockRestaurant = mockk<Restaurant>()
         val order = Order(
-            items = listOf(OrderItem(productId = "pizza quatro queijos", quantity = 2, price = 47.90)),
+            items = listOf(OrderItem(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60), quantity = 2)),
+            customer = mockCustomer,
+            restaurant = mockRestaurant,
         )
+
         every { repository.save(order) } throws EntityAlreadyExistsException("Order already exists")
 
         // When
@@ -51,12 +63,18 @@ class OrderServiceImplTest {
     @Test
     fun `should return all orders`() {
         // Given
+        val mockCustomer = mockk<Customer>()
+        val mockRestaurant = mockk<Restaurant>()
         val orders = listOf(
             Order(
-                items = listOf(OrderItem(productId = "pizza quatro queijos", quantity = 2, price = 47.90)),
+                items = listOf(OrderItem(RestaurantItem(name = "Macarrão manjericão", price = 49.60), quantity = 2)),
+                customer = mockCustomer,
+                restaurant = mockRestaurant,
             ),
             Order(
-                items = listOf(OrderItem(productId = "pizza quatro queijos", quantity = 2, price = 47.90)),
+                items = listOf(OrderItem(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60), quantity = 2)),
+                customer = mockCustomer,
+                restaurant = mockRestaurant,
             ),
         )
 
@@ -73,8 +91,12 @@ class OrderServiceImplTest {
     @Test
     fun `should cancel order`() {
         // Given
+        val mockCustomer = mockk<Customer>()
+        val mockRestaurant = mockk<Restaurant>()
         val order = Order(
-            items = listOf(OrderItem(productId = "pizza quatro queijos", quantity = 2, price = 47.90)),
+            items = listOf(OrderItem(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60), quantity = 2)),
+            customer = mockCustomer,
+            restaurant = mockRestaurant,
         )
 
         justRun { repository.remove(order.trackingCode) }
