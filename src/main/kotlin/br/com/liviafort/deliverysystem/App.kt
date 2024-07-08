@@ -1,5 +1,6 @@
 package br.com.liviafort.deliverysystem
 
+import br.com.liviafort.deliverysystem.application.resources.ReusableComponents
 import br.com.liviafort.deliverysystem.application.submenu.ClientMenuOperations
 import br.com.liviafort.deliverysystem.application.submenu.DeliverymanMenuOperations
 import br.com.liviafort.deliverysystem.application.submenu.OrderMenuOperations
@@ -10,8 +11,10 @@ val clientMenu = ClientMenuOperations()
 val deliverymanMenu = DeliverymanMenuOperations()
 val orderMenu = OrderMenuOperations()
 
+
 fun main() {
     // input de teclado
+    ReusableComponents()
     var selectedOption = selectMenuOption()
 
     while (selectedOption != "5") {
