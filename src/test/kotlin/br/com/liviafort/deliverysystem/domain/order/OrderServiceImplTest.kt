@@ -26,13 +26,13 @@ class OrderServiceImplTest {
     @Test
     fun `should create order`() {
         // Given
-        val mockCustomer = mockk<Customer>()
-        val mockRestaurant = mockk<Restaurant>()
-        val order = Order(
-            items = listOf(OrderItem(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60), quantity = 2)),
-            customer = mockCustomer,
-            restaurant = mockRestaurant,
-        )
+        val order = Order(items = listOf(OrderItem(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60), quantity = 2)), customer = Customer(name = "Ze", phone = "123456", address = "São João, 45"), restaurant = Restaurant(
+            name = "Pizzaria Arnalds",
+            address = "Rua Mania, 34",
+            cnpj = "123212",
+            category = "Pizzaria",
+            items = mutableSetOf(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60))
+        ),)
 
         justRun { repository.save(order) }
 
@@ -46,13 +46,13 @@ class OrderServiceImplTest {
     @Test
     fun `should not save order when there is a conflict`() {
         // Given
-        val mockCustomer = mockk<Customer>()
-        val mockRestaurant = mockk<Restaurant>()
-        val order = Order(
-            items = listOf(OrderItem(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60), quantity = 2)),
-            customer = mockCustomer,
-            restaurant = mockRestaurant,
-        )
+        val order = Order(items = listOf(OrderItem(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60), quantity = 2)), customer = Customer(name = "Ze", phone = "123456", address = "São João, 45"), restaurant = Restaurant(
+            name = "Pizzaria Arnalds",
+            address = "Rua Mania, 34",
+            cnpj = "123212",
+            category = "Pizzaria",
+            items = mutableSetOf(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60))
+        ),)
 
         every { repository.save(order) } throws EntityAlreadyExistsException("Order already exists")
 
@@ -63,19 +63,21 @@ class OrderServiceImplTest {
     @Test
     fun `should return all orders`() {
         // Given
-        val mockCustomer = mockk<Customer>()
-        val mockRestaurant = mockk<Restaurant>()
         val orders = listOf(
-            Order(
-                items = listOf(OrderItem(RestaurantItem(name = "Macarrão manjericão", price = 49.60), quantity = 2)),
-                customer = mockCustomer,
-                restaurant = mockRestaurant,
-            ),
-            Order(
-                items = listOf(OrderItem(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60), quantity = 2)),
-                customer = mockCustomer,
-                restaurant = mockRestaurant,
-            ),
+            Order(items = listOf(OrderItem(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60), quantity = 2)), customer = Customer(name = "Ze", phone = "123456", address = "São João, 45"), restaurant = Restaurant(
+                name = "Pizzaria Arnalds",
+                address = "Rua Mania, 34",
+                cnpj = "123212",
+                category = "Pizzaria",
+                items = mutableSetOf(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60))
+            ),),
+            Order(items = listOf(OrderItem(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60), quantity = 2)), customer = Customer(name = "Janilde", phone = "12345678", address = "São João, 45"), restaurant = Restaurant(
+                name = "Hamburgueria Aureau",
+                address = "Rua Caimbra, 121",
+                category = "Hamburgueria",
+                cnpj = "33493/086786-123",
+                items = mutableSetOf(RestaurantItem(name = "Double cheese", price = 49.60))
+            ),)
         )
 
         every { repository.findAll() } returns orders
@@ -91,13 +93,13 @@ class OrderServiceImplTest {
     @Test
     fun `should cancel order`() {
         // Given
-        val mockCustomer = mockk<Customer>()
-        val mockRestaurant = mockk<Restaurant>()
-        val order = Order(
-            items = listOf(OrderItem(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60), quantity = 2)),
-            customer = mockCustomer,
-            restaurant = mockRestaurant,
-        )
+        val order = Order(items = listOf(OrderItem(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60), quantity = 2)), customer = Customer(name = "Ze", phone = "123456", address = "São João, 45"), restaurant = Restaurant(
+            name = "Pizzaria Arnalds",
+            address = "Rua Mania, 34",
+            cnpj = "123212",
+            category = "Pizzaria",
+            items = mutableSetOf(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60))
+        ),)
 
         justRun { repository.remove(order.trackingCode) }
 
