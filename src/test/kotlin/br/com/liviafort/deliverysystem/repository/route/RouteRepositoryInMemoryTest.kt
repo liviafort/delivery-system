@@ -11,6 +11,7 @@ import br.com.liviafort.deliverysystem.domain.route.Route
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import kotlin.test.assertEquals
 
 class RouteRepositoryInMemoryTest {
     private val repository = RouteRepositoryInMemory()
@@ -95,5 +96,49 @@ class RouteRepositoryInMemoryTest {
         // Then
         assertEquals(2, routes.size)
         assertTrue(routes.containsAll(listOf(route1, route2)))
+    }
+
+    @Test
+    fun `should find a specific route`() {
+        //Given
+        val order = Order(items = listOf(OrderItem(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60), quantity = 2)), customer = Customer(name = "Ze", phone = "123456", address = "São João, 45"), restaurant = Restaurant(
+            name = "Pizzaria Arnalds",
+            address = "Rua Mania, 34",
+            cnpj = "123212",
+            category = "Pizzaria",
+            items = mutableSetOf(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60))
+        ),)
+        val deliveryman = Deliveryman(name = "Josue", phone = "123212", vehicle = "Motocicleta")
+        val route = Route(destination = "Rua Amélia de Sá", deliveryman = deliveryman, order = order)
+
+        repository.save(route)
+
+        //When
+        val result = repository.findOne(route.id)
+
+        //Then
+        assertEquals(route, result)
+    }
+
+    @Test
+    fun `should find a specific route by tracking code`() {
+        //Given
+        val order = Order(items = listOf(OrderItem(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60), quantity = 2)), customer = Customer(name = "Ze", phone = "123456", address = "São João, 45"), restaurant = Restaurant(
+            name = "Pizzaria Arnalds",
+            address = "Rua Mania, 34",
+            cnpj = "123212",
+            category = "Pizzaria",
+            items = mutableSetOf(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60))
+        ),)
+        val deliveryman = Deliveryman(name = "Josue", phone = "123212", vehicle = "Motocicleta")
+        val route = Route(destination = "Rua Amélia de Sá", deliveryman = deliveryman, order = order)
+
+        repository.save(route)
+
+        //When
+        val result = repository.findOneByTrackingCode(route.order.trackingCode)
+
+        //Then
+        assertEquals(route, result)
     }
 }

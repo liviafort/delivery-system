@@ -10,6 +10,7 @@ import br.com.liviafort.deliverysystem.domain.restaurant.RestaurantItem
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import kotlin.test.assertEquals
 
 class OrderRepositoryInMemoryTest {
     private val repository = OrderRepositoryInMemory()
@@ -142,6 +143,26 @@ class OrderRepositoryInMemoryTest {
         //Then
         val trackingCodeSize: Int = order.trackingCode.length
         assertEquals(10, trackingCodeSize)
+    }
+
+    @Test
+    fun `should find a specific order`() {
+        //Given
+        val order = Order(items = listOf(OrderItem(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60), quantity = 2)), customer = Customer(name = "Ze", phone = "123456", address = "São João, 45"), restaurant = Restaurant(
+            name = "Pizzaria Arnalds",
+            address = "Rua Mania, 34",
+            cnpj = "123212",
+            category = "Pizzaria",
+            items = mutableSetOf(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60))
+        ),)
+
+        repository.save(order)
+
+        //When
+        val result = repository.findOne(order.id)
+
+        //Then
+        assertEquals(order, result)
     }
 
 

@@ -1,22 +1,15 @@
 package br.com.liviafort.deliverysystem.application.resources
 
 import br.com.liviafort.deliverysystem.domain.customer.Customer
-import br.com.liviafort.deliverysystem.domain.customer.CustomerServiceImpl
 import br.com.liviafort.deliverysystem.domain.deliveryman.Deliveryman
-import br.com.liviafort.deliverysystem.domain.deliveryman.DeliverymanServiceImpl
 import br.com.liviafort.deliverysystem.domain.restaurant.Restaurant
 import br.com.liviafort.deliverysystem.domain.restaurant.RestaurantItem
-import br.com.liviafort.deliverysystem.domain.restaurant.RestaurantServiceImpl
-import br.com.liviafort.deliverysystem.repository.customer.CustomerRepositoryInMemory
-import br.com.liviafort.deliverysystem.repository.deliveryman.DeliverymanRepositoryInMemory
-import br.com.liviafort.deliverysystem.repository.restaurant.RestaurantRepositoryInMemory
 
 
 class ReusableComponents() {
-    private val customerService = CustomerServiceImpl(repository = CustomerRepositoryInMemory())
-    private val restaurantService = RestaurantServiceImpl(repository = RestaurantRepositoryInMemory())
-    private val deliverymanService = DeliverymanServiceImpl(repository = DeliverymanRepositoryInMemory())
-
+    private val customerService = CustomerServiceSingleton.instance
+    private val restaurantService = RestaurantServiceSingleton.instance
+    private val deliverymanService = DeliverymanServiceSingleton.instance
 
     init {
         createRestaurant()

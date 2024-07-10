@@ -87,15 +87,30 @@ class RestaurantServiceImplTest {
         val items = mutableSetOf(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60))
         val restaurant = Restaurant(name = "Pizzaria Arnalds", address = "Rua Mania, 34", cnpj = "123212", category = "Pizzaria", items = items)
 
-        val mockItem = mockk<RestaurantItem>()
-        justRun { repository.insertItem(restaurant, mockItem) }
+        val newItem = RestaurantItem(name = "Pizza Diavola", price = 47.20)
+        justRun { repository.insertItem(restaurant.id, newItem) }
 
         //Then
-        service.addItem(restaurant, mockItem)
+        service.addItem(restaurant.id, newItem)
 
         //When
-        verify { repository.insertItem(restaurant, mockItem) }
+        verify { repository.insertItem(restaurant.id, newItem) }
     }
 
+    @Test
+    fun `should get a restaurant`() {
+        //Given
+        val items = mutableSetOf(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60))
+        val restaurant = Restaurant(name = "Pizzaria Arnalds", address = "Rua Mania, 34", cnpj = "123212", category = "Pizzaria", items = items)
+
+        every { repository.findOne(restaurant.id) } returns restaurant
+
+        //When
+        val result = service.getRestaurant(restaurant.id)
+
+        //Then
+        verify { repository.findOne(restaurant.id) }
+        assertEquals(restaurant, result)
+    }
 
 }

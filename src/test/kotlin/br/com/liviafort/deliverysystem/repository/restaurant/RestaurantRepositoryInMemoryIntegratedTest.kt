@@ -6,6 +6,7 @@ import br.com.liviafort.deliverysystem.domain.restaurant.RestaurantItem
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import kotlin.test.assertEquals
 
 class RestaurantRepositoryInMemoryIntegratedTest {
     private val repository = RestaurantRepositoryInMemory()
@@ -43,7 +44,7 @@ class RestaurantRepositoryInMemoryIntegratedTest {
     }
 
     @Test
-    fun `should return all customers`() {
+    fun `should return all restaurants`() {
         // Given
         val items1 = mutableSetOf(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60))
         val items2 = mutableSetOf(RestaurantItem(name = "Double cheese", price = 49.60))
@@ -71,12 +72,27 @@ class RestaurantRepositoryInMemoryIntegratedTest {
 
         //When
         val item = RestaurantItem(name = "Pizza Frango com Catupiry", price = 50.00)
-        repository.insertItem(restaurant, item)
+        repository.insertItem(restaurant.id, item)
 
         //Then
         val restaurants = repository.findAll()
         assertEquals(1, restaurants.size)
         restaurants[0].items.contains(item)
+    }
+
+    @Test
+    fun `should find a specific restaurant`() {
+        //Given
+        val items = mutableSetOf(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60))
+        val restaurant = Restaurant(name = "Pizzaria Arnalds", address = "Rua Mania, 34", cnpj = "123212", category = "Pizzaria", items = items)
+
+        repository.save(restaurant)
+
+        //When
+        val result = repository.findOne(restaurant.id)
+
+        //Then
+        assertEquals(restaurant, result)
     }
 
 }

@@ -110,4 +110,25 @@ class OrderServiceImplTest {
         verify { repository.remove(order.trackingCode) }
     }
 
+    @Test
+    fun `should get a order`() {
+        //Given
+        val order = Order(items = listOf(OrderItem(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60), quantity = 2)), customer = Customer(name = "Ze", phone = "123456", address = "São João, 45"), restaurant = Restaurant(
+            name = "Pizzaria Arnalds",
+            address = "Rua Mania, 34",
+            cnpj = "123212",
+            category = "Pizzaria",
+            items = mutableSetOf(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60))
+        ),)
+
+        every { repository.findOne(order.id) } returns order
+
+        //When
+        val result = service.getOrder(order.id)
+
+        //Then
+        verify { repository.findOne(order.id) }
+        assertEquals(order, result)
+    }
+
 }

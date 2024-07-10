@@ -4,6 +4,7 @@ import br.com.liviafort.deliverysystem.domain.exception.EntityAlreadyExistsExcep
 import br.com.liviafort.deliverysystem.domain.exception.EntityNotFoundException
 import br.com.liviafort.deliverysystem.domain.order.Order
 import br.com.liviafort.deliverysystem.domain.order.OrderRepository
+import java.util.*
 
 class OrderRepositoryInMemory : OrderRepository {
     private val orders = mutableMapOf<String, Order>()
@@ -12,6 +13,10 @@ class OrderRepositoryInMemory : OrderRepository {
         if (orders.containsKey(order.trackingCode))
             throw EntityAlreadyExistsException("Order (${order.trackingCode} already exists")
         orders[order.trackingCode] = order
+    }
+
+    override fun findOne(orderId: UUID): Order {
+        return orders.values.first { it.id == orderId }
     }
 
     override fun findAll(): List<Order> {

@@ -57,4 +57,18 @@ class DeliverymanRepositoryInMemoryIntegratedTest {
         assertTrue(deliverymen.containsAll(listOf(deliveryman, deliveryman2)))
     }
 
+    @Test
+    fun `should find a specific deliveryman`() {
+        //Given
+        val deliveryman = Deliveryman(name = "Josue", phone = "68799", vehicle = "Motocicleta")
+
+        repository.save(deliveryman)
+
+        //When
+        val result = repository.findOne(deliveryman.id)
+
+        //Then
+        kotlin.test.assertEquals(deliveryman, result)
+    }
+
 }

@@ -1,7 +1,11 @@
 package br.com.liviafort.deliverysystem.domain.route
 
+import java.util.UUID
+
 interface RouteService {
     fun create(route: Route)
-    fun changeStatus(route: Route, status: RouteStatus)
+    fun getRoute(routeId: UUID): Route
+    fun getRouteByTrackingCode(trackingCode: String): Route
+    fun changeStatus(routeId: UUID, status: RouteStatus)
     fun listing(): List<Route>
 }

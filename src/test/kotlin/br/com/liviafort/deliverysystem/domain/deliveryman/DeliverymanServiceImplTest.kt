@@ -78,4 +78,19 @@ class DeliverymanServiceImplTest {
         assertTrue { result.isEmpty() }
     }
 
+    @Test
+    fun `should get a deliveryman`() {
+        //Given
+        val deliveryman = Deliveryman(name = "Jeremias", phone = "829134342", vehicle = "Car")
+
+        every { repository.findOne(deliveryman.id) } returns deliveryman
+
+        //When
+        val result = service.getDeliveryman(deliveryman.id)
+
+        //Then
+        verify { repository.findOne(deliveryman.id) }
+        assertEquals(deliveryman, result)
+    }
+
 }

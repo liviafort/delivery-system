@@ -1,12 +1,13 @@
 package br.com.liviafort.deliverysystem.application.submenu
 
+import br.com.liviafort.deliverysystem.application.resources.RestaurantServiceSingleton
 import br.com.liviafort.deliverysystem.domain.restaurant.Restaurant
 import br.com.liviafort.deliverysystem.domain.restaurant.RestaurantItem
 import br.com.liviafort.deliverysystem.domain.restaurant.RestaurantServiceImpl
 import br.com.liviafort.deliverysystem.repository.restaurant.RestaurantRepositoryInMemory
 
 class RestaurantMenuOperations {
-    private val restaurantService = RestaurantServiceImpl(repository = RestaurantRepositoryInMemory())
+    private val restaurantService = RestaurantServiceSingleton.instance
 
     fun menu() {
         var selectedOption = selectMenuOption()
@@ -41,8 +42,18 @@ class RestaurantMenuOperations {
     }
 
     private fun listRestaurants() {
-        println("Listando restaurantes")
-        restaurantService.listing()
+        val restaurants = restaurantService.listing()
+        if (restaurants.isEmpty()) {
+            println("Não há restaurantes disponíveis.")
+        } else {
+            println("Lista de Restaurantes:")
+            println("ID\t\t\t\t\t\t| Nome\t| Categoria\t| Endereço\t| CNPJ\t|")
+            println("---------------------------------------------------------------------------------------------------")
+            restaurants.forEach { restaurant ->
+                println("${restaurant.id}\t| ${restaurant.name}\t| ${restaurant.category}\t| ${restaurant.address}\t| ${restaurant.cnpj}\t|")
+            }
+            println("---------------------------------------------------------------------------------------------------\n")
+        }
     }
 
     private fun addItemsToRestaurant(items: MutableSet<RestaurantItem>) {
@@ -55,7 +66,6 @@ class RestaurantMenuOperations {
             println("Item adicionado. Deseja adicionar outro item (s/n)?")
             val answer = readln()
         } while (answer.lowercase() == "s")
-
     }
 
     private fun registerNewRestaurant() {
@@ -79,6 +89,23 @@ class RestaurantMenuOperations {
             println("Restaurante cadastrado com sucesso")
         } catch (e: IllegalArgumentException) {
             println(e.message)
+        }
+    }
+
+    fun getOrderRestaurant(): Restaurant {
+        val restaurants = restaurantService.listing()
+        restaurants.forEachIndexed { index, restaurant ->
+            println("${index + 1}. ${restaurant.name}")
+        }
+        while (true) {
+            println("Escolha um número de restaurante (1 a ${restaurants.size}):")
+            val choice = readlnOrNull()?.toIntOrNull()
+
+            if (choice != null && choice in 1..restaurants.size) {
+                return restaurants[choice - 1]
+            } else {
+                println("Seleção inválida. Por favor, escolha um número entre 1 e ${restaurants.size}.")
+            }
         }
     }
 
