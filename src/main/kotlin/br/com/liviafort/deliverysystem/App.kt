@@ -1,37 +1,40 @@
 package br.com.liviafort.deliverysystem
 
-import br.com.liviafort.deliverysystem.application.submenu.ClientMenuOperations
-import br.com.liviafort.deliverysystem.application.submenu.DeliverymanMenuOperations
-import br.com.liviafort.deliverysystem.application.submenu.RestaurantMenuOperations
-import br.com.liviafort.deliverysystem.domain.client.Customer
-import br.com.liviafort.deliverysystem.domain.client.CustomerServiceImpl
-import br.com.liviafort.deliverysystem.domain.deliveryman.Deliveryman
-import br.com.liviafort.deliverysystem.domain.deliveryman.DeliverymanServiceImpl
-import br.com.liviafort.deliverysystem.domain.restaurant.Restaurant
-import br.com.liviafort.deliverysystem.domain.restaurant.RestaurantServiceImpl
+import br.com.liviafort.deliverysystem.application.resources.ReusableComponents
+import br.com.liviafort.deliverysystem.application.submenu.*
 
 val restaurantMenu = RestaurantMenuOperations()
-val clientMenu = ClientMenuOperations()
+val clientMenu = CustomerMenuOperations()
 val deliverymanMenu = DeliverymanMenuOperations()
+val orderMenu = OrderMenuOperations()
+val routeMenu = RouteMenuOperations()
 
 fun main() {
-    // input de teclado
+    ReusableComponents()
     var selectedOption = selectMenuOption()
 
-    while (selectedOption != "5") {
+    while (selectedOption != "6") {
         when (selectedOption) {
             "1" -> {
                 clientMenu.menu()
             }
+
             "2" -> {
                 restaurantMenu.menu()
             }
+
             "3" -> {
                 deliverymanMenu.menu()
             }
+
             "4" -> {
-                println("Fazendo pedido")
+                orderMenu.menu()
             }
+
+            "5" -> {
+                routeMenu.menu()
+            }
+
             else -> {
                 println("Opção inválida")
             }
@@ -47,6 +50,7 @@ private fun selectMenuOption(): String {
     println("2 - Operações de restaurante")
     println("3 - Operações de entregador")
     println("4 - Fazer pedido")
-    println("5 - Sair")
-    return readlnOrNull() ?: "4"
+    println("5 - Operações de rota")
+    println("6 - Sair")
+    return readlnOrNull() ?: "6"
 }

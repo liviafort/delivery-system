@@ -1,24 +1,18 @@
 package br.com.liviafort.deliverysystem.domain.deliveryman
 
-class DeliverymanServiceImpl: DeliverymanService {
+import java.util.*
 
-    private val deliverymen = mutableListOf<Deliveryman>()
+class DeliverymanServiceImpl(private val repository: DeliverymanRepository) : DeliverymanService {
 
     override fun create(deliveryman: Deliveryman) {
-        try{
-            when{
-                deliverymen.any{ it.phone == deliveryman.phone} -> {
-                    throw IllegalArgumentException("Phone already registered") }
-                else -> deliverymen.add(deliveryman)
-            }
-        }catch(e: IllegalArgumentException){
-            println(e.message)
-        }
+        repository.save(deliveryman)
     }
 
-    override fun listing() {
-        deliverymen.forEachIndexed { index, deliveryman ->
-            println("${index + 1} - ${deliveryman.name}")
-        }
+    override fun getDeliveryman(deliverymanId: UUID): Deliveryman {
+        return repository.findOne(deliverymanId)
+    }
+
+    override fun listing(): List<Deliveryman> {
+        return repository.findAll()
     }
 }

@@ -1,22 +1,26 @@
 package br.com.liviafort.deliverysystem.domain.restaurant
 
-class RestaurantServiceImpl: RestaurantService {
-    private val restaurants = mutableListOf<Restaurant>()
+import java.util.UUID
+
+class RestaurantServiceImpl(private val repository: RestaurantRepository): RestaurantService {
 
     override fun create(restaurant: Restaurant) {
-        try {
-            when{
-                restaurants.any { it.cnpj == restaurant.cnpj } -> {
-                    throw IllegalArgumentException("CNPJ already registered") }
-                else -> restaurants.add(restaurant)}
-        } catch (e: IllegalArgumentException) {
-            println(e.message)
-        }
+        repository.save(restaurant)
     }
 
-    override fun listing() {
-        restaurants.forEachIndexed { index, restaurant ->
-            println("${index + 1} - ${restaurant.name}")
-        }
+    override fun getRestaurant(restaurantId: UUID): Restaurant {
+        return repository.findOne(restaurantId)
+    }
+
+    override fun listing(): List<Restaurant> {
+        return repository.findAll()
+    }
+
+    override fun addItem(restaurantId: UUID, restaurantItem: RestaurantItem) {
+        repository.insertItem(restaurantId, restaurantItem)
+    }
+
+    override fun listingItems(restaurantId: UUID): List<RestaurantItem> {
+        return repository.findAllItems(restaurantId)
     }
 }
