@@ -18,7 +18,10 @@ class ReusableComponents() {
     }
 
     private fun createRestaurant() {
-        val items1 = mutableSetOf(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60))
+        val items1 = mutableSetOf(
+            RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60),
+            RestaurantItem(name = "Pizza Diavola", price = 47.20),
+        )
         val items2 = mutableSetOf(RestaurantItem(name = "Double cheese", price = 49.60))
 
         val restaurant1 = Restaurant(

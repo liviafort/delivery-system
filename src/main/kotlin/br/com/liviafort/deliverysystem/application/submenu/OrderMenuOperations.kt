@@ -97,11 +97,10 @@ class OrderMenuOperations {
     private fun getOrderItems(restaurantItems: List<RestaurantItem>): List<OrderItem> {
         val listOrderItem = mutableListOf<OrderItem>()
 
-        restaurantItems.forEachIndexed { index, item ->
-            println("${index + 1}. ${item.name} - Preço: ${item.price}")
-        }
-
         while (true) {
+            restaurantItems.forEachIndexed { index, item ->
+                println("${index + 1}. ${item.name} - Preço: ${item.price}")
+            }
             println("Escolha um item pelo número (ou digite 'sair' para finalizar):")
             val input = readlnOrNull()
 
@@ -117,6 +116,7 @@ class OrderMenuOperations {
 
                 listOrderItem.add(OrderItem(selectedItem, quantity))
                 println("Adicionado: ${selectedItem.name} x$quantity")
+                println("Deseja mais alguma coisa?")
             } else {
                 println("Seleção inválida. Por favor, escolha um número válido.")
             }
