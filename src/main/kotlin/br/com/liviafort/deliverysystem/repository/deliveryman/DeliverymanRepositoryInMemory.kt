@@ -9,7 +9,7 @@ import java.util.*
 class DeliverymanRepositoryInMemory: DeliverymanRepository {
 
     override fun save(deliveryman: Deliveryman) {
-        val sql = "INSERT INTO deliverymen (id, phone, name, vehicle) VALUES (?, ?, ?, ?)"
+        val sql = "INSERT INTO deliveryman (id, phone, name, vehicle) VALUES (?, ?, ?, ?)"
         val connection = DatabaseConfig.getConnection()
         try {
             val statement = connection.prepareStatement(sql)
@@ -26,7 +26,7 @@ class DeliverymanRepositoryInMemory: DeliverymanRepository {
     }
 
     override fun findOne(deliverymanId: UUID): Deliveryman {
-        val sql = "SELECT id, phone, name, vehicle FROM deliverymen WHERE id = ?"
+        val sql = "SELECT id, phone, name, vehicle FROM deliveryman WHERE id = ?"
         val connection = DatabaseConfig.getConnection()
         try {
             val preparedStatement = connection.prepareStatement(sql)
@@ -50,7 +50,7 @@ class DeliverymanRepositoryInMemory: DeliverymanRepository {
     }
 
     override fun findAll(): List<Deliveryman> {
-        val sql = "SELECT phone, name, vehicle FROM deliverymen"
+        val sql = "SELECT * FROM deliveryman"
         val connection = DatabaseConfig.getConnection()
         val deliverymen = mutableListOf<Deliveryman>()
         try {
@@ -58,6 +58,7 @@ class DeliverymanRepositoryInMemory: DeliverymanRepository {
             val resultSet = preparedStatement.executeQuery()
             while (resultSet.next()) {
                 val deliveryman = Deliveryman(
+                    id = resultSet.getObject("id", UUID::class.java),
                     phone = resultSet.getString("phone"),
                     name = resultSet.getString("name"),
                     vehicle = resultSet.getString("vehicle")

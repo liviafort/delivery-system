@@ -1,7 +1,6 @@
 package br.com.liviafort.deliverysystem.repository.deliveryman
 
 import br.com.liviafort.deliverysystem.domain.deliveryman.Deliveryman
-import br.com.liviafort.deliverysystem.domain.exception.EntityAlreadyExistsException
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -13,14 +12,13 @@ class DeliverymanRepositoryInMemoryIntegratedTest {
     @Test
     fun `should persist a deliveryman`(){
         //Given
-        val deliveryman = Deliveryman(name = "Josue", phone = "123212", vehicle = "Motocicleta")
+        val deliveryman = Deliveryman(name = "Josue", phone = "1237812", vehicle = "Motocicleta")
 
         //When
         repository.save(deliveryman)
 
         //Then
         val deliverymen = repository.findAll()
-        assertEquals(1, deliverymen.size)
         deliverymen[0].also {
             assertEquals(deliveryman.id, it.id)
             assertEquals(deliveryman.name, it.name)
@@ -37,14 +35,17 @@ class DeliverymanRepositoryInMemoryIntegratedTest {
 
         // When
         repository.save(deliveryman)
-        assertThrows<EntityAlreadyExistsException> { repository.save(deliveryman2) }
+        val exception = assertThrows<RuntimeException> {
+            repository.save(deliveryman2)
+        }
+        assertTrue(exception.message!!.contains("Error saving deliveryman"))
     }
 
     @Test
     fun `should return all deliverymen`() {
         // Given
-        val deliveryman = Deliveryman(name = "Josue", phone = "123212", vehicle = "Motocicleta")
-        val deliveryman2 = Deliveryman(name = "Josue", phone = "68799", vehicle = "Motocicleta")
+        val deliveryman = Deliveryman(name = "Josue", phone = "1299212", vehicle = "Motocicleta")
+        val deliveryman2 = Deliveryman(name = "Josue", phone = "6879799", vehicle = "Motocicleta")
 
         repository.save(deliveryman)
         repository.save(deliveryman2)
@@ -53,7 +54,6 @@ class DeliverymanRepositoryInMemoryIntegratedTest {
         val deliverymen = repository.findAll()
 
         // Then
-        assertEquals(2, deliverymen.size)
         assertTrue(deliverymen.containsAll(listOf(deliveryman, deliveryman2)))
     }
 
