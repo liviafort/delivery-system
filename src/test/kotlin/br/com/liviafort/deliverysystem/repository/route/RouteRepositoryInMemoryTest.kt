@@ -1,5 +1,6 @@
 package br.com.liviafort.deliverysystem.repository.route
 
+import br.com.liviafort.deliverysystem.di.DependencyContainer
 import br.com.liviafort.deliverysystem.domain.customer.Customer
 import br.com.liviafort.deliverysystem.domain.deliveryman.Deliveryman
 import br.com.liviafort.deliverysystem.domain.exception.EntityAlreadyExistsException
@@ -14,7 +15,7 @@ import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 
 class RouteRepositoryInMemoryTest {
-    private val repository = RouteRepositoryInMemory()
+    private val repository = DependencyContainer.routeRepository
 
     @Test
     fun `should persist a route`() {

@@ -15,7 +15,7 @@ class RouteRepositoryInMemory(
     private val orderRepository: OrderRepository): RouteRepository {
 
     override fun save(route: Route) {
-        val sql = "INSERT INTO route (id, restaurant_id, customer_id, tracking_code, total_price) VALUES (?, ?, ?, ?, ?)"
+        val sql = "INSERT INTO route (id, destination, deliveryman_id, order_id, status, identifier) VALUES (?, ?, ?, ?, ?, ?)"
         val connection = DatabaseConfig.getConnection()
         try {
             connection.autoCommit = false // Para realizar transações
@@ -26,7 +26,7 @@ class RouteRepositoryInMemory(
             routeStatement.setObject(3, route.deliveryman.id)
             routeStatement.setObject(4, route.order.id)
             routeStatement.setString(5, route.status.toString())
-            routeStatement.setString(5, route.identifier)
+            routeStatement.setString(6, route.identifier)
             routeStatement.executeUpdate()
 
             connection.commit()
@@ -64,11 +64,12 @@ class RouteRepositoryInMemory(
     }
 
     override fun findOneByTrackingCode(trackingCode: String): Route {
-        val sql = "SELECT * FROM route WHERE trackingCode = ?"
+        val orderId = orderRepository.findOneByTrackingCode(trackingCode)
+        val sql = "SELECT * FROM route WHERE order_id = ?"
         val connection = DatabaseConfig.getConnection()
         try {
             val preparedStatement = connection.prepareStatement(sql)
-            preparedStatement.setObject(1, trackingCode)
+            preparedStatement.setObject(1, orderId)
             val resultSet = preparedStatement.executeQuery()
             if (resultSet.next()) {
                 return Route(

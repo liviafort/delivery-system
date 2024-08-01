@@ -14,7 +14,7 @@ class OrderRepositoryInMemory(
     private val customerRepository: CustomerRepository) : OrderRepository {
 
     override fun save(order: Order) {
-        val sql = "INSERT INTO order (id, restaurant_id, customer_id, tracking_code, total_price) VALUES (?, ?, ?, ?, ?)"
+        val sql = "INSERT INTO orders (id, restaurant_id, customer_id, tracking_code, total_price) VALUES (?, ?, ?, ?, ?)"
         val itemSql = "INSERT INTO order_items (id, order_id, restaurant_item_id, quantity) VALUES (?, ?, ?, ?)"
         val connection = DatabaseConfig.getConnection()
         try {
@@ -51,7 +51,7 @@ class OrderRepositoryInMemory(
     }
 
     override fun findOne(orderId: UUID): Order {
-        val sql = "SELECT id, restaurant_id, customer_id FROM order WHERE id = ?"
+        val sql = "SELECT id, restaurant_id, customer_id FROM orders WHERE id = ?"
         val connection = DatabaseConfig.getConnection()
         try {
             val preparedStatement = connection.prepareStatement(sql)
@@ -74,8 +74,32 @@ class OrderRepositoryInMemory(
         }
     }
 
+    override fun findOneByTrackingCode(trackingCode: String): Order {
+        val sql = "SELECT id, restaurant_id, customer_id FROM orders WHERE trackingCode = ?"
+        val connection = DatabaseConfig.getConnection()
+        try {
+            val preparedStatement = connection.prepareStatement(sql)
+            preparedStatement.setObject(1, trackingCode)
+            val resultSet = preparedStatement.executeQuery()
+            if (resultSet.next()) {
+                return Order(
+                    id = resultSet.getObject("id", UUID::class.java),
+                    restaurant = restaurantRepository.findOne(resultSet.getObject("restaurant_id", UUID::class.java)),
+                    customer = customerRepository.findOne(resultSet.getObject("customer_id", UUID::class.java)),
+                    items = getOrderItemsByTrackingCode(trackingCode)
+                )
+            } else {
+                throw NoSuchElementException("Order with tracking code $trackingCode not found")
+            }
+        } catch (e: SQLException) {
+            throw RuntimeException("Error retrieving order", e)
+        } finally {
+            connection.close()
+        }
+    }
+
     override fun findAll(): List<Order> {
-        val sql = "SELECT id, restaurant_id, customer_id FROM order"
+        val sql = "SELECT id, restaurant_id, customer_id FROM orders"
         val connection = DatabaseConfig.getConnection()
         val orders = mutableListOf<Order>()
         try {
@@ -103,7 +127,7 @@ class OrderRepositoryInMemory(
 
 
     override fun remove(trackingCode: String) {
-        val sql = "DELETE FROM order WHERE trackingCode = ?"
+        val sql = "DELETE FROM orders WHERE trackingCode = ?"
         val connection = DatabaseConfig.getConnection()
         try {
             val preparedStatement = connection.prepareStatement(sql)
@@ -126,6 +150,27 @@ class OrderRepositoryInMemory(
         try {
             val preparedStatement = connection.prepareStatement(sql)
             preparedStatement.setObject(1, orderId)
+            val resultSet = preparedStatement.executeQuery()
+            while (resultSet.next()) {
+                val restaurantItem = restaurantRepository.findOneItem(resultSet.getObject("restaurant_item_id", UUID::class.java))
+                val quantity = resultSet.getInt("quantity")
+                items.add(OrderItem(restaurantItem, quantity))
+            }
+        } catch (e: SQLException) {
+            throw RuntimeException("Error retrieving order items", e)
+        } finally {
+            connection.close()
+        }
+        return items
+    }
+
+    private fun getOrderItemsByTrackingCode(trackingCode: String): List<OrderItem> {
+        val sql = "SELECT * FROM order_items WHERE order_id = ?"
+        val connection = DatabaseConfig.getConnection()
+        val items = mutableListOf<OrderItem>()
+        try {
+            val preparedStatement = connection.prepareStatement(sql)
+            preparedStatement.setObject(1, trackingCode)
             val resultSet = preparedStatement.executeQuery()
             while (resultSet.next()) {
                 val restaurantItem = restaurantRepository.findOneItem(resultSet.getObject("restaurant_item_id", UUID::class.java))

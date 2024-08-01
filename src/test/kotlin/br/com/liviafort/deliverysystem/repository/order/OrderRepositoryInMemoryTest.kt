@@ -1,5 +1,6 @@
 package br.com.liviafort.deliverysystem.repository.order
 
+import br.com.liviafort.deliverysystem.di.DependencyContainer
 import br.com.liviafort.deliverysystem.domain.customer.Customer
 import br.com.liviafort.deliverysystem.domain.exception.EntityAlreadyExistsException
 import br.com.liviafort.deliverysystem.domain.exception.EntityNotFoundException
@@ -13,23 +14,37 @@ import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 
 class OrderRepositoryInMemoryTest {
-    private val repository = OrderRepositoryInMemory()
+    private val repository = DependencyContainer.orderRepository
+    private val restaurantRepository = DependencyContainer.restaurantRepository
+    private val customerRepository = DependencyContainer.customerRepository
 
     @Test
     fun `should persist a order`() {
-        //Given
-        val order = Order(items = listOf(OrderItem(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60), quantity = 2)), customer = Customer(name = "Ze", phone = "123456", address = "São João, 45"), restaurant = Restaurant(
+        // Given
+        val restaurant = Restaurant(
             name = "Pizzaria Arnalds",
             address = "Rua Mania, 34",
             cnpj = "123212",
             category = "Pizzaria",
             items = mutableSetOf(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60))
-        ),)
+        )
+        // Inserindo o restaurante no banco de dados
+        restaurantRepository.save(restaurant)
 
-        //When
+        val customer = Customer(name = "Ze", phone = "123456", address = "São João, 45")
+        // Inserindo o cliente no banco de dados
+        customerRepository.save(customer)
+
+        val order = Order(
+            items = listOf(OrderItem(RestaurantItem(name = "Pizza Quatro Queijos", price = 49.60), quantity = 2)),
+            customer = customer,
+            restaurant = restaurant
+        )
+
+        // When
         repository.save(order)
 
-        //Then
+        // Then
         val orders = repository.findAll()
         assertEquals(1, orders.size)
         orders[0].also {

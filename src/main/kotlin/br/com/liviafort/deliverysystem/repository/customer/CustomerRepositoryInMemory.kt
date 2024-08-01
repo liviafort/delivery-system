@@ -10,7 +10,7 @@ import java.util.UUID
 class CustomerRepositoryInMemory: CustomerRepository {
 
     override fun save(customer: Customer) {
-        val sql = "INSERT INTO customers (id, phone, name, address) VALUES (?, ?, ?, ?)"
+        val sql = "INSERT INTO customer (id, phone, name, address) VALUES (?, ?, ?, ?)"
         val connection = DatabaseConfig.getConnection()
         try {
             val statement = connection.prepareStatement(sql)
@@ -27,7 +27,7 @@ class CustomerRepositoryInMemory: CustomerRepository {
     }
 
     override fun findAll(): List<Customer> {
-        val sql = "SELECT phone, name, address FROM customers"
+        val sql = "SELECT * FROM customer"
         val connection = DatabaseConfig.getConnection()
         val customers = mutableListOf<Customer>()
         try {
@@ -35,6 +35,7 @@ class CustomerRepositoryInMemory: CustomerRepository {
             val resultSet = preparedStatement.executeQuery()
             while (resultSet.next()) {
                 val customer = Customer(
+                    id = resultSet.getObject("id", UUID::class.java),
                     phone = resultSet.getString("phone"),
                     name = resultSet.getString("name"),
                     address = resultSet.getString("address")
@@ -50,7 +51,7 @@ class CustomerRepositoryInMemory: CustomerRepository {
     }
 
     override fun findOne(customerId: UUID): Customer {
-        val sql = "SELECT * FROM customers WHERE id = ?"
+        val sql = "SELECT * FROM customer WHERE id = ?"
         val connection = DatabaseConfig.getConnection()
         try {
             val preparedStatement = connection.prepareStatement(sql)

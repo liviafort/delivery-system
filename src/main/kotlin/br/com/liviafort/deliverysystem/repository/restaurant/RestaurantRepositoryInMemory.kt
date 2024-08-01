@@ -10,8 +10,8 @@ import java.util.*
 class RestaurantRepositoryInMemory: RestaurantRepository {
 
     override fun save(restaurant: Restaurant) {
-        val sql = "INSERT INTO customers (id, phone, name, address) VALUES (?, ?, ?, ?)"
-        val itemSql = "INSERT INTO restaurant_items (id, restaurant_id, name, price) VALUES (?, ?, ?, ?)"
+        val sql = "INSERT INTO restaurant (id, name, address, category, cnpj) VALUES (?, ?, ?, ?, ?)"
+        val itemSql = "INSERT INTO restaurant_item (id, restaurant_id, name, price) VALUES (?, ?, ?, ?)"
         val connection = DatabaseConfig.getConnection()
         try {
             connection.autoCommit = false
