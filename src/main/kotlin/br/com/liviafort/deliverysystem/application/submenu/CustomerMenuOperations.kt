@@ -1,10 +1,11 @@
 package br.com.liviafort.deliverysystem.application.submenu
 
-import br.com.liviafort.deliverysystem.application.resources.CustomerServiceSingleton
+import br.com.liviafort.deliverysystem.di.DependencyContainer
 import br.com.liviafort.deliverysystem.domain.customer.Customer
+import br.com.liviafort.deliverysystem.domain.customer.CustomerServiceImpl
 
 class CustomerMenuOperations {
-    private val customerService = CustomerServiceSingleton.instance
+    private val customerService = CustomerServiceImpl(DependencyContainer.customerRepository)
 
     fun menu() {
         var selectedOption = selectMenuOption()

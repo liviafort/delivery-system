@@ -24,5 +24,3 @@ data class RestaurantItem(
     val name: String,
     val price: Double
 )
-
-

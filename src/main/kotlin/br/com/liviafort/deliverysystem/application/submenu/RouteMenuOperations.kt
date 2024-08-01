@@ -1,16 +1,23 @@
 package br.com.liviafort.deliverysystem.application.submenu
 
-import br.com.liviafort.deliverysystem.application.resources.DeliverymanServiceSingleton
-import br.com.liviafort.deliverysystem.application.resources.OrderServiceSingleton
-import br.com.liviafort.deliverysystem.application.resources.RouteServiceSingleton
+import br.com.liviafort.deliverysystem.di.DependencyContainer
+import br.com.liviafort.deliverysystem.domain.deliveryman.DeliverymanService
+import br.com.liviafort.deliverysystem.domain.deliveryman.DeliverymanServiceImpl
+import br.com.liviafort.deliverysystem.domain.order.OrderServiceImpl
 import br.com.liviafort.deliverysystem.domain.route.Route
+import br.com.liviafort.deliverysystem.domain.route.RouteServiceImpl
 import br.com.liviafort.deliverysystem.domain.route.RouteStatus
+import br.com.liviafort.deliverysystem.repository.customer.CustomerRepositoryInMemory
+import br.com.liviafort.deliverysystem.repository.deliveryman.DeliverymanRepositoryInMemory
+import br.com.liviafort.deliverysystem.repository.order.OrderRepositoryInMemory
+import br.com.liviafort.deliverysystem.repository.restaurant.RestaurantRepositoryInMemory
+import br.com.liviafort.deliverysystem.repository.route.RouteRepositoryInMemory
 import java.util.UUID
 
 class RouteMenuOperations {
-    private val routeService = RouteServiceSingleton.instance
-    private val deliverymanService = DeliverymanServiceSingleton.instance
-    private val orderService = OrderServiceSingleton.instance
+    private val routeService = RouteServiceImpl(DependencyContainer.routeRepository)
+    private val deliverymanService = DeliverymanServiceImpl(DependencyContainer.deliverymanRepository)
+    private val orderService = OrderServiceImpl(DependencyContainer.orderRepository)
 
     fun menu() {
         var selectedOption = selectMenuOption()

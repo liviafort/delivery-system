@@ -1,13 +1,17 @@
 package br.com.liviafort.deliverysystem.application.submenu
 
-import br.com.liviafort.deliverysystem.application.resources.OrderServiceSingleton
 import br.com.liviafort.deliverysystem.deliverymanMenu
+import br.com.liviafort.deliverysystem.di.DependencyContainer
 import br.com.liviafort.deliverysystem.domain.order.Order
 import br.com.liviafort.deliverysystem.domain.order.OrderItem
+import br.com.liviafort.deliverysystem.domain.order.OrderServiceImpl
 import br.com.liviafort.deliverysystem.domain.restaurant.RestaurantItem
+import br.com.liviafort.deliverysystem.repository.customer.CustomerRepositoryInMemory
+import br.com.liviafort.deliverysystem.repository.order.OrderRepositoryInMemory
+import br.com.liviafort.deliverysystem.repository.restaurant.RestaurantRepositoryInMemory
 
 class OrderMenuOperations {
-    private val orderService = OrderServiceSingleton.instance
+    private val orderService = OrderServiceImpl(DependencyContainer.orderRepository)
     private val customerMenuOperation = CustomerMenuOperations()
     private val routeMenuOperations = RouteMenuOperations()
     private val restaurantMenuOperation = RestaurantMenuOperations()
