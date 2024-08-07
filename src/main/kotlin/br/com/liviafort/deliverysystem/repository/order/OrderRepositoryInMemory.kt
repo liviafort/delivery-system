@@ -2,6 +2,8 @@ package br.com.liviafort.deliverysystem.repository.order
 
 import br.com.liviafort.deliverysystem.config.DatabaseConfig
 import br.com.liviafort.deliverysystem.domain.customer.CustomerRepository
+import br.com.liviafort.deliverysystem.domain.exception.EntityAlreadyExistsException
+import br.com.liviafort.deliverysystem.domain.exception.EntityNotFoundException
 import br.com.liviafort.deliverysystem.domain.order.Order
 import br.com.liviafort.deliverysystem.domain.order.OrderItem
 import br.com.liviafort.deliverysystem.domain.order.OrderRepository
@@ -15,7 +17,7 @@ class OrderRepositoryInMemory(
 
     override fun save(order: Order) {
         val sql = "INSERT INTO orders (id, restaurant_id, customer_id, tracking_code, total_price) VALUES (?, ?, ?, ?, ?)"
-        val itemSql = "INSERT INTO order_items (id, order_id, restaurant_item_id, quantity) VALUES (?, ?, ?, ?)"
+        val itemSql = "INSERT INTO order_item (id, order_id, restaurant_item_id, quantity) VALUES (?, ?, ?, ?)"
         val connection = DatabaseConfig.getConnection()
         try {
             // Order
@@ -34,7 +36,7 @@ class OrderRepositoryInMemory(
             for (item in order.items) {
                 itemStatement.setObject(1, UUID.randomUUID())
                 itemStatement.setObject(2, order.id)
-                itemStatement.setObject(3, item.restaurantItem.productId)
+                itemStatement.setObject(3, item.restaurantItem.id)
                 itemStatement.setInt(4, item.quantity)
                 itemStatement.addBatch()
             }
@@ -43,12 +45,17 @@ class OrderRepositoryInMemory(
             connection.commit()
         } catch (e: SQLException) {
             connection.rollback()
-            throw RuntimeException("Error saving order", e)
+            if (e.message?.contains("duplicate key value violates unique constraint") == true) {
+                throw EntityAlreadyExistsException("Order with the same ID already exists")
+            } else {
+                throw RuntimeException("Error saving order", e)
+            }
         } finally {
-            connection.autoCommit = true // Restaura o comportamento padrão de auto-commit
+            connection.autoCommit = true
             connection.close()
         }
     }
+
 
     override fun findOne(orderId: UUID): Order {
         val sql = "SELECT id, restaurant_id, customer_id FROM orders WHERE id = ?"
@@ -75,7 +82,7 @@ class OrderRepositoryInMemory(
     }
 
     override fun findOneByTrackingCode(trackingCode: String): Order {
-        val sql = "SELECT id, restaurant_id, customer_id FROM orders WHERE trackingCode = ?"
+        val sql = "SELECT id, restaurant_id, customer_id FROM orders WHERE tracking_code = ?"
         val connection = DatabaseConfig.getConnection()
         try {
             val preparedStatement = connection.prepareStatement(sql)
@@ -114,7 +121,7 @@ class OrderRepositoryInMemory(
                     id = orderId,
                     items = items,
                     restaurant = restaurant,
-                    customer = customer
+                    customer = customer,
                 ))
             }
         } catch (e: SQLException) {
@@ -125,26 +132,36 @@ class OrderRepositoryInMemory(
         return orders
     }
 
-
     override fun remove(trackingCode: String) {
-        val sql = "DELETE FROM orders WHERE trackingCode = ?"
+        val deleteItemsSql = "DELETE FROM order_item WHERE order_id = (SELECT id FROM orders WHERE tracking_code = ?)"
+        val deleteOrderSql = "DELETE FROM orders WHERE tracking_code = ?"
         val connection = DatabaseConfig.getConnection()
         try {
-            val preparedStatement = connection.prepareStatement(sql)
-            preparedStatement.setObject(1, trackingCode)
-            val rowsAffected = preparedStatement.executeUpdate()
+            connection.autoCommit = false
+
+            val deleteItemsStatement = connection.prepareStatement(deleteItemsSql)
+            deleteItemsStatement.setString(1, trackingCode)
+            deleteItemsStatement.executeUpdate()
+
+            val deleteOrderStatement = connection.prepareStatement(deleteOrderSql)
+            deleteOrderStatement.setString(1, trackingCode)
+            val rowsAffected = deleteOrderStatement.executeUpdate()
             if (rowsAffected == 0) {
-                throw NoSuchElementException("Order with tracking code $trackingCode not found")
+                throw EntityNotFoundException("Order with tracking code $trackingCode not found")
             }
+
+            connection.commit()
         } catch (e: SQLException) {
+            connection.rollback()
             throw RuntimeException("Error deleting order", e)
         } finally {
+            connection.autoCommit = true
             connection.close()
         }
     }
 
     private fun getOrderItems(orderId: UUID): List<OrderItem> {
-        val sql = "SELECT * FROM order_items WHERE order_id = ?"
+        val sql = "SELECT * FROM order_item WHERE order_id = ?"
         val connection = DatabaseConfig.getConnection()
         val items = mutableListOf<OrderItem>()
         try {
@@ -165,7 +182,12 @@ class OrderRepositoryInMemory(
     }
 
     private fun getOrderItemsByTrackingCode(trackingCode: String): List<OrderItem> {
-        val sql = "SELECT * FROM order_items WHERE order_id = ?"
+        val sql = """
+        SELECT oi.*
+        FROM order_item oi
+        INNER JOIN orders o ON oi.order_id = o.id
+        WHERE o.tracking_code = ?
+    """
         val connection = DatabaseConfig.getConnection()
         val items = mutableListOf<OrderItem>()
         try {
@@ -184,4 +206,5 @@ class OrderRepositoryInMemory(
         }
         return items
     }
+
 }

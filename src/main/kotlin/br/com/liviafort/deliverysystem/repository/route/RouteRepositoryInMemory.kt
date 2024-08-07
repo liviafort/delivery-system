@@ -12,7 +12,8 @@ import java.util.UUID
 
 class RouteRepositoryInMemory(
     private val deliverymanRepository: DeliverymanRepository,
-    private val orderRepository: OrderRepository): RouteRepository {
+    private val orderRepository: OrderRepository
+) : RouteRepository {
 
     override fun save(route: Route) {
         val sql = "INSERT INTO route (id, destination, deliveryman_id, order_id, status, identifier) VALUES (?, ?, ?, ?, ?, ?)"
@@ -50,12 +51,14 @@ class RouteRepositoryInMemory(
                 return Route(
                     id = resultSet.getObject("id", UUID::class.java),
                     destination = resultSet.getString("destination"),
-                    deliveryman = deliverymanRepository.findOne(resultSet.getObject("customer_id", UUID::class.java)),
-                    order = orderRepository.findOne(resultSet.getObject("customer_id", UUID::class.java)),
+                    deliveryman = deliverymanRepository.findOne(resultSet.getObject("deliveryman_id", UUID::class.java)),
+                    order = orderRepository.findOne(resultSet.getObject("order_id", UUID::class.java)),
+                    status = RouteStatus.valueOf(resultSet.getString("status")),
                 )
             } else {
                 throw NoSuchElementException("Route with ID $routeId not found")
             }
+
         } catch (e: SQLException) {
             throw RuntimeException("Error retrieving route", e)
         } finally {
@@ -64,19 +67,19 @@ class RouteRepositoryInMemory(
     }
 
     override fun findOneByTrackingCode(trackingCode: String): Route {
-        val orderId = orderRepository.findOneByTrackingCode(trackingCode)
+        val order = orderRepository.findOneByTrackingCode(trackingCode)
         val sql = "SELECT * FROM route WHERE order_id = ?"
         val connection = DatabaseConfig.getConnection()
         try {
             val preparedStatement = connection.prepareStatement(sql)
-            preparedStatement.setObject(1, orderId)
+            preparedStatement.setObject(1, order.id)
             val resultSet = preparedStatement.executeQuery()
             if (resultSet.next()) {
                 return Route(
                     id = resultSet.getObject("id", UUID::class.java),
                     destination = resultSet.getString("destination"),
-                    deliveryman = deliverymanRepository.findOne(resultSet.getObject("customer_id", UUID::class.java)),
-                    order = orderRepository.findOne(resultSet.getObject("customer_id", UUID::class.java)),
+                    deliveryman = deliverymanRepository.findOne(resultSet.getObject("deliveryman_id", UUID::class.java)),
+                    order = orderRepository.findOne(resultSet.getObject("order_id", UUID::class.java)),
                 )
             } else {
                 throw NoSuchElementException("Route with Tracking Code $trackingCode not found")
@@ -92,14 +95,16 @@ class RouteRepositoryInMemory(
         val sql = "UPDATE route SET status = ? WHERE id = ?"
         val connection = DatabaseConfig.getConnection()
         try {
+            connection.autoCommit = false
             val preparedStatement = connection.prepareStatement(sql)
-            preparedStatement.setString(1, status.name)
+            preparedStatement.setString(1, status.toString())
             preparedStatement.setObject(2, routeId)
             val rowsAffected = preparedStatement.executeUpdate()
 
             if (rowsAffected == 0) {
                 throw NoSuchElementException("Route with ID $routeId not found")
             }
+            connection.commit()
         } catch (e: SQLException) {
             throw RuntimeException("Error updating route status", e)
         } finally {
@@ -117,15 +122,15 @@ class RouteRepositoryInMemory(
             while (resultSet.next()) {
                 val routeId = resultSet.getObject("id", UUID::class.java)
                 val destination = resultSet.getString("destination")
-                val deliveryman = deliverymanRepository.findOne(resultSet.getObject("customer_id", UUID::class.java))
-                val order = orderRepository.findOne(resultSet.getObject("customer_id", UUID::class.java))
+                val deliveryman = deliverymanRepository.findOne(resultSet.getObject("deliveryman_id", UUID::class.java))
+                val order = orderRepository.findOne(resultSet.getObject("order_id", UUID::class.java))
                 routes.add(
                     Route(
-                    id = routeId,
-                    destination = destination,
-                    deliveryman = deliveryman,
-                    order = order,
-                )
+                        id = routeId,
+                        destination = destination,
+                        deliveryman = deliveryman,
+                        order = order,
+                    )
                 )
             }
         } catch (e: SQLException) {

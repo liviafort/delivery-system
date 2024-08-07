@@ -12,39 +12,45 @@ class RestaurantRepositoryInMemory: RestaurantRepository {
     override fun save(restaurant: Restaurant) {
         val sql = "INSERT INTO restaurant (id, name, address, category, cnpj) VALUES (?, ?, ?, ?, ?)"
         val itemSql = "INSERT INTO restaurant_item (id, restaurant_id, name, price) VALUES (?, ?, ?, ?)"
-        val connection = DatabaseConfig.getConnection()
-        try {
+        DatabaseConfig.getConnection().use { connection ->
             connection.autoCommit = false
+            try {
+                connection.prepareStatement(sql).use { statement ->
+                    statement.setObject(1, restaurant.id)
+                    statement.setString(2, restaurant.name)
+                    statement.setString(3, restaurant.address)
+                    statement.setString(4, restaurant.category)
+                    statement.setString(5, restaurant.cnpj)
+                    statement.executeUpdate()
+                }
 
-            //Restaurant
-            val statement = connection.prepareStatement(sql)
-            statement.setObject(1, restaurant.id)
-            statement.setString(2, restaurant.name)
-            statement.setString(3, restaurant.address)
-            statement.setString(4, restaurant.category)
-            statement.setString(5, restaurant.cnpj)
-            statement.executeUpdate()
+                connection.prepareStatement(itemSql).use { itemStatement ->
+                    for (item in restaurant.items) {
+                        itemStatement.setObject(1, item.id)
+                        itemStatement.setObject(2, restaurant.id)
+                        itemStatement.setString(3, item.name)
+                        itemStatement.setDouble(4, item.price)
+                        itemStatement.addBatch()
+                    }
+                    itemStatement.executeBatch()
+                }
 
-            //Restaurant Items
-            val itemStatement = connection.prepareStatement(itemSql)
-            for (item in restaurant.items) {
-                itemStatement.setObject(1, UUID.randomUUID())
-                itemStatement.setObject(2, restaurant.id)
-                itemStatement.setObject(3, item.name)
-                itemStatement.setDouble(4, item.price)
-                itemStatement.addBatch()
+                connection.commit()
+            } catch (e: SQLException) {
+                connection.rollback()
+                if (e.message?.contains("duplicate key value violates unique constraint \"restaurant_cnpj_key\"") == true) {
+                    throw RuntimeException("Error saving restaurant: CNPJ already exists", e)
+                } else {
+                    throw RuntimeException("Error saving restaurant", e)
+                }
             }
-            itemStatement.executeBatch()
-
-        } catch (e: SQLException) {
-            throw RuntimeException("Error saving customer", e)
-        } finally {
-            connection.close()
         }
     }
 
+
+
     override fun findOne(restaurantId: UUID): Restaurant {
-        val sql = "SELECT * FROM restaurants WHERE id = ?"
+        val sql = "SELECT * FROM restaurant WHERE id = ?"
         val connection = DatabaseConfig.getConnection()
         try {
             val preparedStatement = connection.prepareStatement(sql)
@@ -88,8 +94,8 @@ class RestaurantRepositoryInMemory: RestaurantRepository {
                         id = orderId,
                         name = name,
                         address = address,
-                        category = category,
                         cnpj = cnpj,
+                        category = category,
                         items = items.toMutableSet()
                 )
                 )
@@ -103,11 +109,11 @@ class RestaurantRepositoryInMemory: RestaurantRepository {
     }
 
     override fun insertItem(restaurantId: UUID, restaurantItem: RestaurantItem) {
-        val sql = "INSERT INTO restaurant_items (id, restaurant_id, name, price) VALUES (?, ?, ?, ?)"
+        val sql = "INSERT INTO restaurant_item (id, restaurant_id, name, price) VALUES (?, ?, ?, ?)"
         val connection = DatabaseConfig.getConnection()
         try {
             val preparedStatement = connection.prepareStatement(sql)
-            preparedStatement.setObject(1, restaurantItem.productId)
+            preparedStatement.setObject(1, restaurantItem.id)
             preparedStatement.setObject(2, restaurantId)
             preparedStatement.setString(3, restaurantItem.name)
             preparedStatement.setDouble(4, restaurantItem.price)
@@ -120,7 +126,7 @@ class RestaurantRepositoryInMemory: RestaurantRepository {
     }
 
     override fun findAllItems(restaurantId: UUID): List<RestaurantItem> {
-        val sql = "SELECT * FROM restaurant_items WHERE restaurant_id = ?"
+        val sql = "SELECT * FROM restaurant_item WHERE restaurant_id = ?"
         val connection = DatabaseConfig.getConnection()
         val items = mutableListOf<RestaurantItem>()
         try {
@@ -129,7 +135,7 @@ class RestaurantRepositoryInMemory: RestaurantRepository {
             val resultSet = preparedStatement.executeQuery()
             while (resultSet.next()) {
                 items.add(RestaurantItem(
-                    productId = resultSet.getObject("id", UUID::class.java),
+                    id = resultSet.getObject("id", UUID::class.java),
                     name = resultSet.getString("name"),
                     price = resultSet.getDouble("price")
                 ))
@@ -143,7 +149,7 @@ class RestaurantRepositoryInMemory: RestaurantRepository {
     }
 
     override fun findOneItem(itemId: UUID): RestaurantItem {
-        val sql = "SELECT * FROM restaurant_items WHERE id = ?"
+        val sql = "SELECT * FROM restaurant_item WHERE id = ?"
         val connection = DatabaseConfig.getConnection()
         try {
             val preparedStatement = connection.prepareStatement(sql)
@@ -151,7 +157,7 @@ class RestaurantRepositoryInMemory: RestaurantRepository {
             val resultSet = preparedStatement.executeQuery()
             if (resultSet.next()) {
                 return RestaurantItem(
-                    productId = resultSet.getObject("id", UUID::class.java),
+                    id = resultSet.getObject("id", UUID::class.java),
                     name = resultSet.getString("name"),
                     price = resultSet.getDouble("price")
                 )
