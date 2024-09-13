@@ -15,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.util.*
+import kotlin.test.AfterTest
 import kotlin.test.assertEquals
 
 class RouteRepositoryInMemoryTest {
@@ -26,6 +27,11 @@ class RouteRepositoryInMemoryTest {
 
     @BeforeEach
     fun setup() {
+        clearDatabase()
+    }
+
+    @AfterTest
+    fun final() {
         clearDatabase()
     }
 
@@ -339,7 +345,7 @@ class RouteRepositoryInMemoryTest {
 
     private fun clearDatabase() {
         val connection = DatabaseConfig.getConnection()
-        try {
+        connection.use { connection ->
             val statement = connection.createStatement()
             statement.executeUpdate("DELETE FROM route")
             statement.executeUpdate("DELETE FROM order_item")
@@ -348,8 +354,6 @@ class RouteRepositoryInMemoryTest {
             statement.executeUpdate("DELETE FROM restaurant")
             statement.executeUpdate("DELETE FROM customer")
             statement.executeUpdate("DELETE FROM deliveryman")
-        } finally {
-            connection.close()
         }
     }
 }

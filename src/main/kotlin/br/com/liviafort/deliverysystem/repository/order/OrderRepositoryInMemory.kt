@@ -10,7 +10,9 @@ import br.com.liviafort.deliverysystem.domain.order.OrderRepository
 import br.com.liviafort.deliverysystem.domain.restaurant.RestaurantRepository
 import java.sql.SQLException
 import java.util.*
+import org.springframework.stereotype.Repository
 
+@Repository
 class OrderRepositoryInMemory(
     private val restaurantRepository: RestaurantRepository,
     private val customerRepository: CustomerRepository) : OrderRepository {

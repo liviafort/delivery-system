@@ -84,11 +84,9 @@ class DeliverymanRepositoryInMemoryIntegratedTest {
 
     private fun clearDatabase() {
         val connection = DatabaseConfig.getConnection()
-        try {
+        connection.use { connection ->
             val statement = connection.createStatement()
             statement.executeUpdate("DELETE FROM deliveryman")
-        } finally {
-            connection.close()
         }
     }
 }

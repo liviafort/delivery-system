@@ -6,7 +6,9 @@ import br.com.liviafort.deliverysystem.domain.restaurant.RestaurantItem
 import br.com.liviafort.deliverysystem.domain.restaurant.RestaurantRepository
 import java.sql.SQLException
 import java.util.*
+import org.springframework.stereotype.Repository
 
+@Repository
 class RestaurantRepositoryInMemory: RestaurantRepository {
 
     override fun save(restaurant: Restaurant) {

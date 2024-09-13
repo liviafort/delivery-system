@@ -1,7 +1,9 @@
 package br.com.liviafort.deliverysystem.domain.deliveryman
 
-import java.util.*
+import java.util.UUID
+import org.springframework.stereotype.Service
 
+@Service
 class DeliverymanServiceImpl(private val repository: DeliverymanRepository) : DeliverymanService {
 
     override fun create(deliveryman: Deliveryman) {

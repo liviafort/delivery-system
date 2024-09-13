@@ -1,7 +1,9 @@
 package br.com.liviafort.deliverysystem.domain.order
 
 import java.util.*
+import org.springframework.stereotype.Service
 
+@Service
 class OrderServiceImpl(private val repository: OrderRepository): OrderService {
     override fun create(order: Order) {
         repository.save(order)

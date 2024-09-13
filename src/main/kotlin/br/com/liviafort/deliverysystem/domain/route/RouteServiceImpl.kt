@@ -1,7 +1,9 @@
 package br.com.liviafort.deliverysystem.domain.route
 
 import java.util.UUID
+import org.springframework.stereotype.Service
 
+@Service
 class RouteServiceImpl(private val repository: RouteRepository) : RouteService {
     override fun create(route: Route) {
         repository.save(route)
