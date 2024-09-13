@@ -56,8 +56,6 @@ class RestaurantRepositoryInMemoryIntegratedTest {
         assertTrue(exception.message!!.contains("CNPJ already exists"))
     }
 
-
-
     @Test
     fun `should return all restaurants`() {
         // Given
@@ -92,7 +90,6 @@ class RestaurantRepositoryInMemoryIntegratedTest {
         assertEquals(restaurant2.items.size, savedRestaurant2?.items?.size)
         assertTrue(savedRestaurant2?.items?.containsAll(restaurant2.items) ?: false)
     }
-
 
     @Test
     fun `should save a new restaurant item`() {
@@ -133,7 +130,6 @@ class RestaurantRepositoryInMemoryIntegratedTest {
         assertEquals(restaurant.items.size, result.items.size)
         assertTrue(result.items.any { it.id == itemId && it.name == "Pizza Quatro Queijos" && it.price == 49.60 })
     }
-
 
     private fun clearDatabase() {
         val connection = DatabaseConfig.getConnection()

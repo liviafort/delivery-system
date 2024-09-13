@@ -99,7 +99,6 @@ class OrderRepositoryInMemoryTest {
         assertTrue(exception.message!!.contains("Order with the same ID already exists"))
     }
 
-
     @Test
     fun `should return all orders`() {
         // Given
