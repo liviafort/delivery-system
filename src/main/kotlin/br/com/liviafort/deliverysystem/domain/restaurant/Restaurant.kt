@@ -20,9 +20,7 @@ data class Restaurant(
 }
 
 data class RestaurantItem(
-    val productId: UUID = UUID.randomUUID(),
+    val id: UUID = UUID.randomUUID(),
     val name: String,
     val price: Double
 )
-
-

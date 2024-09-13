@@ -10,8 +10,8 @@ data class Route(
     val destination: String,
     val deliveryman: Deliveryman,
     val order: Order,
+    var status: RouteStatus = RouteStatus.IN_PROGRESS,
 ) {
-    var status: RouteStatus = RouteStatus.IN_PROGRESS
     val identifier: String = List(5) { Random.nextInt(0, 10) }.joinToString("")
     init {
         require(destination.isNotBlank()) { "Destination must not be blank" }
