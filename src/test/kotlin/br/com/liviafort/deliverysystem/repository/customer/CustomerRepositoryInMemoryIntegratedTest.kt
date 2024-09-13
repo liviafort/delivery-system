@@ -1,18 +1,25 @@
 package br.com.liviafort.deliverysystem.repository.customer
 
+import br.com.liviafort.deliverysystem.config.DatabaseConfig
 import br.com.liviafort.deliverysystem.domain.customer.Customer
-import br.com.liviafort.deliverysystem.domain.exception.EntityAlreadyExistsException
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.util.*
 
 class CustomerRepositoryInMemoryIntegratedTest {
     private val repository = CustomerRepositoryInMemory()
 
+    @BeforeEach
+    fun setup() {
+        clearDatabase()
+    }
+
     @Test
     fun `should persist a customer`() {
         // Given
-        val customer = Customer(name = "Ze", phone = "123456", address = "São João, 45")
+        val customer = Customer(id = UUID.randomUUID(), name = "Ze", phone = "8270392", address = "São João, 45")
 
         // When
         repository.save(customer)
@@ -29,21 +36,26 @@ class CustomerRepositoryInMemoryIntegratedTest {
     }
 
     @Test
-    fun `should fail when a customer already exist`() {
+    fun `should fail when a customer already exists`() {
         // Given
-        val customer = Customer(name = "Ze", phone = "123456", address = "São João, 45")
-        val customer2 = Customer(name = "Janilde", phone = "123456", address = "São João, 45")
+        val customer = Customer(id = UUID.randomUUID(), name = "Ze", phone = "123456", address = "São João, 45")
+        val customer2 = Customer(id = UUID.randomUUID(), name = "Janilde", phone = "123456", address = "São João, 45")
 
         // When
         repository.save(customer)
-        assertThrows<EntityAlreadyExistsException> { repository.save(customer2) }
+        val exception = assertThrows<RuntimeException> {
+            repository.save(customer2)
+        }
+
+        // Then
+        assertTrue(exception.message!!.contains("Error saving customer"))
     }
 
     @Test
     fun `should return all customers`() {
         // Given
-        val customer = Customer(name = "Ze", phone = "123456", address = "São João, 45")
-        val customer2 = Customer(name = "Janilde", phone = "12345678", address = "São João, 45")
+        val customer = Customer(id = UUID.randomUUID(), name = "Ze", phone = "123856", address = "São João, 45")
+        val customer2 = Customer(id = UUID.randomUUID(), name = "Janilde", phone = "12345678", address = "São João, 45")
 
         repository.save(customer)
         repository.save(customer2)
@@ -54,5 +66,15 @@ class CustomerRepositoryInMemoryIntegratedTest {
         // Then
         assertEquals(2, customers.size)
         assertTrue(customers.containsAll(listOf(customer, customer2)))
+    }
+
+    private fun clearDatabase() {
+        val connection = DatabaseConfig.getConnection()
+        try {
+            val statement = connection.createStatement()
+            statement.executeUpdate("DELETE FROM customer")
+        } finally {
+            connection.close()
+        }
     }
 }

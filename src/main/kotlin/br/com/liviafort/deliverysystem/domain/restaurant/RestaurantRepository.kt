@@ -8,4 +8,5 @@ interface RestaurantRepository {
     fun findAll(): List<Restaurant>
     fun insertItem(restaurantId: UUID, restaurantItem: RestaurantItem)
     fun findAllItems(restaurantId: UUID): List<RestaurantItem>
+    fun findOneItem(itemId: UUID): RestaurantItem
 }

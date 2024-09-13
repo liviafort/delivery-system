@@ -7,4 +7,5 @@ interface OrderRepository {
     fun findOne(orderId: UUID): Order
     fun findAll(): List<Order>
     fun remove(trackingCode: String)
+    fun findOneByTrackingCode(trackingCode: String): Order
 }

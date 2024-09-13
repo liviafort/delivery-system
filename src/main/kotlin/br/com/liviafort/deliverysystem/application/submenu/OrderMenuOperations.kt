@@ -1,13 +1,17 @@
 package br.com.liviafort.deliverysystem.application.submenu
 
-import br.com.liviafort.deliverysystem.application.resources.OrderServiceSingleton
 import br.com.liviafort.deliverysystem.deliverymanMenu
+import br.com.liviafort.deliverysystem.di.DependencyContainer
 import br.com.liviafort.deliverysystem.domain.order.Order
 import br.com.liviafort.deliverysystem.domain.order.OrderItem
+import br.com.liviafort.deliverysystem.domain.order.OrderServiceImpl
 import br.com.liviafort.deliverysystem.domain.restaurant.RestaurantItem
+import br.com.liviafort.deliverysystem.repository.customer.CustomerRepositoryInMemory
+import br.com.liviafort.deliverysystem.repository.order.OrderRepositoryInMemory
+import br.com.liviafort.deliverysystem.repository.restaurant.RestaurantRepositoryInMemory
 
 class OrderMenuOperations {
-    private val orderService = OrderServiceSingleton.instance
+    private val orderService = OrderServiceImpl(DependencyContainer.orderRepository)
     private val customerMenuOperation = CustomerMenuOperations()
     private val routeMenuOperations = RouteMenuOperations()
     private val restaurantMenuOperation = RestaurantMenuOperations()
@@ -97,11 +101,10 @@ class OrderMenuOperations {
     private fun getOrderItems(restaurantItems: List<RestaurantItem>): List<OrderItem> {
         val listOrderItem = mutableListOf<OrderItem>()
 
-        restaurantItems.forEachIndexed { index, item ->
-            println("${index + 1}. ${item.name} - Preço: ${item.price}")
-        }
-
         while (true) {
+            restaurantItems.forEachIndexed { index, item ->
+                println("${index + 1}. ${item.name} - Preço: ${item.price}")
+            }
             println("Escolha um item pelo número (ou digite 'sair' para finalizar):")
             val input = readlnOrNull()
 
@@ -117,6 +120,7 @@ class OrderMenuOperations {
 
                 listOrderItem.add(OrderItem(selectedItem, quantity))
                 println("Adicionado: ${selectedItem.name} x$quantity")
+                println("Deseja mais alguma coisa?")
             } else {
                 println("Seleção inválida. Por favor, escolha um número válido.")
             }

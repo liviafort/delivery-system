@@ -13,6 +13,7 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("io.mockk:mockk:1.13.11")
     implementation(kotlin("stdlib-jdk8"))
+    implementation("org.postgresql:postgresql:42.7.2")
 }
 
 tasks.test {
