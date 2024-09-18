@@ -5,7 +5,9 @@ import br.com.liviafort.deliverysystem.domain.deliveryman.Deliveryman
 import br.com.liviafort.deliverysystem.domain.deliveryman.DeliverymanRepository
 import java.sql.SQLException
 import java.util.*
+import org.springframework.stereotype.Repository
 
+@Repository
 class DeliverymanRepositoryInMemory: DeliverymanRepository {
 
     override fun save(deliveryman: Deliveryman) {

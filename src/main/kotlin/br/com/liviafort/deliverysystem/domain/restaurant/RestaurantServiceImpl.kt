@@ -1,7 +1,9 @@
 package br.com.liviafort.deliverysystem.domain.restaurant
 
 import java.util.UUID
+import org.springframework.stereotype.Service
 
+@Service
 class RestaurantServiceImpl(private val repository: RestaurantRepository): RestaurantService {
 
     override fun create(restaurant: Restaurant) {

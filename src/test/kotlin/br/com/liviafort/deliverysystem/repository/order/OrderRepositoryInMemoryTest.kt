@@ -302,15 +302,13 @@ class OrderRepositoryInMemoryTest {
 
     private fun clearDatabase() {
         val connection = DatabaseConfig.getConnection()
-        try {
+        connection.use { connection ->
             val statement = connection.createStatement()
             statement.executeUpdate("DELETE FROM order_item")
             statement.executeUpdate("DELETE FROM orders")
             statement.executeUpdate("DELETE FROM restaurant_item")
             statement.executeUpdate("DELETE FROM restaurant")
             statement.executeUpdate("DELETE FROM customer")
-        } finally {
-            connection.close()
         }
     }
 }

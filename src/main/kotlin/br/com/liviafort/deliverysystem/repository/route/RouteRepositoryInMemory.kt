@@ -9,7 +9,9 @@ import br.com.liviafort.deliverysystem.domain.route.RouteStatus
 import java.sql.SQLException
 import java.util.NoSuchElementException
 import java.util.UUID
+import org.springframework.stereotype.Repository
 
+@Repository
 class RouteRepositoryInMemory(
     private val deliverymanRepository: DeliverymanRepository,
     private val orderRepository: OrderRepository

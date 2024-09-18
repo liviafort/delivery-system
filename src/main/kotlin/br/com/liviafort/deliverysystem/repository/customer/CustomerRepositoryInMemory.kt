@@ -6,7 +6,9 @@ import br.com.liviafort.deliverysystem.domain.customer.CustomerRepository
 import java.sql.SQLException
 import java.sql.Statement
 import java.util.UUID
+import org.springframework.stereotype.Repository
 
+@Repository
 class CustomerRepositoryInMemory: CustomerRepository {
 
     override fun save(customer: Customer) {

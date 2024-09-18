@@ -4,7 +4,7 @@ import java.sql.Connection
 import java.sql.DriverManager
 
 object DatabaseConfig {
-    private const val URL = "jdbc:postgresql://localhost:5433/postgres"
+    private const val URL = "jdbc:postgresql://localhost:5434/postgres"
     private const val USER = "postgres"
     private const val PASSWORD = "1234"
 
