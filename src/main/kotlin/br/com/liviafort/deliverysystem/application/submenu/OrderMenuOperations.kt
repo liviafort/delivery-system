@@ -1,6 +1,5 @@
 package br.com.liviafort.deliverysystem.application.submenu
 
-import br.com.liviafort.deliverysystem.deliverymanMenu
 import br.com.liviafort.deliverysystem.di.DependencyContainer
 import br.com.liviafort.deliverysystem.domain.order.Order
 import br.com.liviafort.deliverysystem.domain.order.OrderItem
@@ -15,6 +14,7 @@ class OrderMenuOperations {
     private val customerMenuOperation = CustomerMenuOperations()
     private val routeMenuOperations = RouteMenuOperations()
     private val restaurantMenuOperation = RestaurantMenuOperations()
+    private val deliverymanMenuOperation = DeliverymanMenuOperations()
 
     fun menu() {
         var selectedOption = selectMenuOption()
@@ -155,7 +155,7 @@ class OrderMenuOperations {
 
         when (choice) {
             "A" -> {
-                val deliveryman = deliverymanMenu.selectDeliveryman()
+                val deliveryman = deliverymanMenuOperation.selectDeliveryman()
                 routeMenuOperations.registerNewRoute(order.id, deliveryman.id)
             }
             "C" -> orderService.cancel(order.trackingCode)
