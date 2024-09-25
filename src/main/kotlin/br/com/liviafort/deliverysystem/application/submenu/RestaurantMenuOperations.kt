@@ -4,7 +4,6 @@ import br.com.liviafort.deliverysystem.di.DependencyContainer
 import br.com.liviafort.deliverysystem.domain.restaurant.Restaurant
 import br.com.liviafort.deliverysystem.domain.restaurant.RestaurantItem
 import br.com.liviafort.deliverysystem.domain.restaurant.RestaurantServiceImpl
-import br.com.liviafort.deliverysystem.repository.restaurant.RestaurantRepositoryInMemory
 
 class RestaurantMenuOperations {
     private val restaurantService = RestaurantServiceImpl(DependencyContainer.restaurantRepository)

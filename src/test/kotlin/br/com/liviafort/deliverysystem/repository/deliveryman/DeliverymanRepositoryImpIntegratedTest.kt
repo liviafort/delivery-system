@@ -1,20 +1,18 @@
 package br.com.liviafort.deliverysystem.repository.deliveryman
 
-import br.com.liviafort.deliverysystem.config.DatabaseConfig
 import br.com.liviafort.deliverysystem.domain.deliveryman.Deliveryman
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
-class DeliverymanRepositoryInMemoryIntegratedTest {
-    private val repository = DeliverymanRepositoryInMemory()
+@Transactional
+class DeliverymanRepositoryImplIntegrationTest {
 
-    @BeforeEach
-    fun setup() {
-        clearDatabase()
-    }
+    @Autowired
+    private lateinit var repository: DeliverymanRepositoryImpl
 
     @Test
     fun `should persist a deliveryman`() {
@@ -80,13 +78,5 @@ class DeliverymanRepositoryInMemoryIntegratedTest {
 
         // Then
         assertEquals(deliveryman, result)
-    }
-
-    private fun clearDatabase() {
-        val connection = DatabaseConfig.getConnection()
-        connection.use { connection ->
-            val statement = connection.createStatement()
-            statement.executeUpdate("DELETE FROM deliveryman")
-        }
     }
 }

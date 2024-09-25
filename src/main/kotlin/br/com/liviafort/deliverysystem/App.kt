@@ -1,6 +1,5 @@
 package br.com.liviafort.deliverysystem
 
-import br.com.liviafort.deliverysystem.application.resources.ReusableComponents
 import br.com.liviafort.deliverysystem.application.submenu.CustomerMenuOperations
 import br.com.liviafort.deliverysystem.application.submenu.DeliverymanMenuOperations
 import br.com.liviafort.deliverysystem.application.submenu.OrderMenuOperations

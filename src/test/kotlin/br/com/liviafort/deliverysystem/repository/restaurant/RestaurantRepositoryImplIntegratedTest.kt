@@ -1,22 +1,19 @@
 package br.com.liviafort.deliverysystem.repository.restaurant
 
-import br.com.liviafort.deliverysystem.config.DatabaseConfig
 import br.com.liviafort.deliverysystem.domain.restaurant.Restaurant
 import br.com.liviafort.deliverysystem.domain.restaurant.RestaurantItem
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.transaction.annotation.Transactional
 import java.util.*
-import kotlin.test.assertEquals
 
-class RestaurantRepositoryInMemoryIntegratedTest {
-    private val repository = RestaurantRepositoryInMemory()
+@Transactional
+class RestaurantRepositoryImplIntegratedTest {
 
-    @BeforeEach
-    fun setup() {
-        clearDatabase()
-    }
+    @Autowired
+    private lateinit var repository: RestaurantRepositoryImpl
 
     @Test
     fun `should persist a restaurant`() {
@@ -129,14 +126,5 @@ class RestaurantRepositoryInMemoryIntegratedTest {
         assertEquals(restaurant.category, result.category)
         assertEquals(restaurant.items.size, result.items.size)
         assertTrue(result.items.any { it.id == itemId && it.name == "Pizza Quatro Queijos" && it.price == 49.60 })
-    }
-
-    private fun clearDatabase() {
-        val connection = DatabaseConfig.getConnection()
-        connection.use { connection ->
-            val statement = connection.createStatement()
-            statement.executeUpdate("DELETE FROM restaurant_item")
-            statement.executeUpdate("DELETE FROM restaurant")
-        }
     }
 }

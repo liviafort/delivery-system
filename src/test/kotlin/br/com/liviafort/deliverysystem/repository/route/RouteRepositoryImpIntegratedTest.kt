@@ -1,40 +1,51 @@
-package br.com.liviafort.deliverysystem.repository.order
+package br.com.liviafort.deliverysystem.repository.route
 
-import br.com.liviafort.deliverysystem.config.DatabaseConfig
-import br.com.liviafort.deliverysystem.di.DependencyContainer
 import br.com.liviafort.deliverysystem.domain.customer.Customer
-import br.com.liviafort.deliverysystem.domain.exception.EntityAlreadyExistsException
-import br.com.liviafort.deliverysystem.domain.exception.EntityNotFoundException
+import br.com.liviafort.deliverysystem.domain.deliveryman.Deliveryman
 import br.com.liviafort.deliverysystem.domain.order.Order
 import br.com.liviafort.deliverysystem.domain.order.OrderItem
 import br.com.liviafort.deliverysystem.domain.restaurant.Restaurant
 import br.com.liviafort.deliverysystem.domain.restaurant.RestaurantItem
+import br.com.liviafort.deliverysystem.domain.route.Route
+import br.com.liviafort.deliverysystem.domain.route.RouteStatus
+import br.com.liviafort.deliverysystem.repository.customer.CustomerRepositoryImpl
+import br.com.liviafort.deliverysystem.repository.deliveryman.DeliverymanRepositoryImpl
+import br.com.liviafort.deliverysystem.repository.order.OrderRepositoryImpl
+import br.com.liviafort.deliverysystem.repository.restaurant.RestaurantRepositoryImpl
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.transaction.annotation.Transactional
 import java.util.*
-import kotlin.test.assertEquals
 
-class OrderRepositoryInMemoryTest {
-    private val repository = DependencyContainer.orderRepository
-    private val restaurantRepository = DependencyContainer.restaurantRepository
-    private val customerRepository = DependencyContainer.customerRepository
+@Transactional
+class RouteRepositoryImpIntegratedTest {
 
-    @BeforeEach
-    fun setup() {
-        clearDatabase()
-    }
+    @Autowired
+    private lateinit var repository: RouteRepositoryImpl
+
+    @Autowired
+    private lateinit var deliverymanRepository: DeliverymanRepositoryImpl
+
+    @Autowired
+    private lateinit var orderRepository: OrderRepositoryImpl
+
+    @Autowired
+    private lateinit var restaurantRepository: RestaurantRepositoryImpl
+
+    @Autowired
+    private lateinit var customerRepository: CustomerRepositoryImpl
 
     @Test
-    fun `should persist an order`() {
+    fun `should persist a route`() {
         // Given
         val restaurantItem = RestaurantItem(id = UUID.randomUUID(), name = "Pizza Quatro Queijos", price = 49.60)
         val restaurant = Restaurant(
             id = UUID.randomUUID(),
             name = "Pizzaria Arnalds",
             address = "Rua Mania, 34",
-            cnpj = "123212",
+            cnpj = "1237712",
             category = "Pizzaria",
             items = mutableSetOf(restaurantItem)
         )
@@ -48,33 +59,44 @@ class OrderRepositoryInMemoryTest {
             id = UUID.randomUUID(),
             items = listOf(orderItem),
             customer = customer,
-            restaurant = restaurant
+            restaurant = restaurant,
+        )
+        orderRepository.save(order)
+
+        val deliverymanId = UUID.randomUUID()
+        val deliveryman = Deliveryman(id = deliverymanId, name = "John", phone = "987654", vehicle = "Bike")
+        deliverymanRepository.save(deliveryman)
+
+        val route = Route(
+            id = UUID.randomUUID(),
+            destination = "Rua das Flores, 123",
+            deliveryman = deliveryman,
+            order = order,
         )
 
         // When
-        repository.save(order)
+        repository.save(route)
 
         // Then
-        val orders = repository.findAll()
-        assertEquals(1, orders.size)
-        orders[0].also {
-            assertEquals(order.id, it.id)
-            assertEquals(order.items.size, it.items.size)
-            assertEquals(order.items[0].restaurantItem.id, it.items[0].restaurantItem.id)
-            assertEquals(order.customer.id, it.customer.id)
-            assertEquals(order.restaurant.id, it.restaurant.id)
+        val routes = repository.findAll()
+        assertEquals(1, routes.size)
+        routes[0].also {
+            assertEquals(route.id, it.id)
+            assertEquals(route.destination, it.destination)
+            assertEquals(route.deliveryman.id, it.deliveryman.id)
+            assertEquals(route.order.id, it.order.id)
         }
     }
 
     @Test
-    fun `should fail when an order already exists`() {
+    fun `should fail when a route already exists`() {
         // Given
         val restaurantItem = RestaurantItem(id = UUID.randomUUID(), name = "Pizza Quatro Queijos", price = 49.60)
         val restaurant = Restaurant(
             id = UUID.randomUUID(),
             name = "Pizzaria Arnalds",
             address = "Rua Mania, 34",
-            cnpj = "123212",
+            cnpj = "123215",
             category = "Pizzaria",
             items = mutableSetOf(restaurantItem)
         )
@@ -88,26 +110,34 @@ class OrderRepositoryInMemoryTest {
             id = UUID.randomUUID(),
             items = listOf(orderItem),
             customer = customer,
-            restaurant = restaurant
+            restaurant = restaurant,
+        )
+        orderRepository.save(order)
+
+        val deliveryman = Deliveryman(id = UUID.randomUUID(), name = "John", phone = "987654", vehicle = "Bike")
+        deliverymanRepository.save(deliveryman)
+
+        val route = Route(
+            id = UUID.randomUUID(),
+            destination = "Rua das Flores, 123",
+            deliveryman = deliveryman,
+            order = order,
         )
 
         // When
-        repository.save(order)
-        val exception = assertThrows<EntityAlreadyExistsException> { repository.save(order) }
-
-        // Then
-        assertTrue(exception.message!!.contains("Order with the same ID already exists"))
+        repository.save(route)
+        assertThrows<RuntimeException> { repository.save(route) }
     }
 
     @Test
-    fun `should return all orders`() {
+    fun `should return all routes`() {
         // Given
         val restaurantItem1 = RestaurantItem(id = UUID.randomUUID(), name = "Pizza Quatro Queijos", price = 49.60)
         val restaurant1 = Restaurant(
             id = UUID.randomUUID(),
             name = "Pizzaria Arnalds",
             address = "Rua Mania, 34",
-            cnpj = "123212",
+            cnpj = "18883212",
             category = "Pizzaria",
             items = mutableSetOf(restaurantItem1)
         )
@@ -134,36 +164,57 @@ class OrderRepositoryInMemoryTest {
             id = UUID.randomUUID(),
             items = listOf(OrderItem(restaurantItem1, quantity = 2)),
             customer = customer1,
-            restaurant = restaurant1
+            restaurant = restaurant1,
         )
+        orderRepository.save(order1)
 
         val order2 = Order(
             id = UUID.randomUUID(),
             items = listOf(OrderItem(restaurantItem2, quantity = 2)),
             customer = customer2,
-            restaurant = restaurant2
+            restaurant = restaurant2,
+        )
+        orderRepository.save(order2)
+
+        val deliveryman1 = Deliveryman(id = UUID.randomUUID(), name = "John", phone = "987654", vehicle = "Bike")
+        deliverymanRepository.save(deliveryman1)
+
+        val deliveryman2 = Deliveryman(id = UUID.randomUUID(), name = "Doe", phone = "123789", vehicle = "Car")
+        deliverymanRepository.save(deliveryman2)
+
+        val route1 = Route(
+            id = UUID.randomUUID(),
+            destination = "Rua das Flores, 123",
+            deliveryman = deliveryman1,
+            order = order1,
         )
 
-        repository.save(order1)
-        repository.save(order2)
+        val route2 = Route(
+            id = UUID.randomUUID(),
+            destination = "Rua dos Pássaros, 456",
+            deliveryman = deliveryman2,
+            order = order2,
+        )
+
+        repository.save(route1)
+        repository.save(route2)
 
         // When
-        val orders = repository.findAll()
+        val routes = repository.findAll()
 
         // Then
-        assertEquals(2, orders.size)
-        assertTrue(orders.containsAll(listOf(order1, order2)))
+        assertTrue(routes.containsAll(listOf(route1, route2)))
     }
 
     @Test
-    fun `should remove an order`() {
+    fun `should update route status`() {
         // Given
         val restaurantItem = RestaurantItem(id = UUID.randomUUID(), name = "Pizza Quatro Queijos", price = 49.60)
         val restaurant = Restaurant(
             id = UUID.randomUUID(),
             name = "Pizzaria Arnalds",
             address = "Rua Mania, 34",
-            cnpj = "123212",
+            cnpj = "123210",
             category = "Pizzaria",
             items = mutableSetOf(restaurantItem)
         )
@@ -177,33 +228,38 @@ class OrderRepositoryInMemoryTest {
             id = UUID.randomUUID(),
             items = listOf(orderItem),
             customer = customer,
-            restaurant = restaurant
+            restaurant = restaurant,
         )
-        repository.save(order)
+        orderRepository.save(order)
+
+        val deliveryman = Deliveryman(id = UUID.randomUUID(), name = "John", phone = "987654", vehicle = "Bike")
+        deliverymanRepository.save(deliveryman)
+
+        val route = Route(
+            id = UUID.randomUUID(),
+            destination = "Rua das Flores, 123",
+            deliveryman = deliveryman,
+            order = order,
+        )
+        repository.save(route)
 
         // When
-        repository.remove(order.trackingCode)
+        repository.updateStatus(route.id, RouteStatus.FINISHED)
 
         // Then
-        val orders = repository.findAll()
-        assertEquals(0, orders.size)
+        val updatedRoute = repository.findOne(route.id)
+        assertEquals(RouteStatus.FINISHED, updatedRoute.status)
     }
 
     @Test
-    fun `should fail when removing non-existent order`() {
-        val exception = assertThrows<EntityNotFoundException> { repository.remove("nonExistentTrackCode") }
-        assertTrue(exception.message!!.contains("Order with tracking code nonExistentTrackCode not found"))
-    }
-
-    @Test
-    fun `should correctly calculate the total price`() {
+    fun `should find a specific route`() {
         // Given
         val restaurantItem = RestaurantItem(id = UUID.randomUUID(), name = "Pizza Quatro Queijos", price = 49.60)
         val restaurant = Restaurant(
             id = UUID.randomUUID(),
             name = "Pizzaria Arnalds",
             address = "Rua Mania, 34",
-            cnpj = "123212",
+            cnpj = "125212",
             category = "Pizzaria",
             items = mutableSetOf(restaurantItem)
         )
@@ -217,24 +273,40 @@ class OrderRepositoryInMemoryTest {
             id = UUID.randomUUID(),
             items = listOf(orderItem),
             customer = customer,
-            restaurant = restaurant
+            restaurant = restaurant,
         )
-        repository.save(order)
+        orderRepository.save(order)
+
+        val deliveryman = Deliveryman(id = UUID.randomUUID(), name = "John", phone = "987654", vehicle = "Bike")
+        deliverymanRepository.save(deliveryman)
+
+        val route = Route(
+            id = UUID.randomUUID(),
+            destination = "Rua das Flores, 123",
+            deliveryman = deliveryman,
+            order = order,
+        )
+        repository.save(route)
+
+        // When
+        val result = repository.findOne(route.id)
 
         // Then
-        val calculatePrice: Double = order.items.sumOf { it.quantity * it.restaurantItem.price }
-        assertEquals(order.totalPrice, calculatePrice)
+        assertEquals(route.id, result.id)
+        assertEquals(route.destination, result.destination)
+        assertEquals(route.deliveryman.id, result.deliveryman.id)
+        assertEquals(route.order.id, result.order.id)
     }
 
     @Test
-    fun `should have ten characters in the tracking code`() {
+    fun `should find a specific route by tracking code`() {
         // Given
         val restaurantItem = RestaurantItem(id = UUID.randomUUID(), name = "Pizza Quatro Queijos", price = 49.60)
         val restaurant = Restaurant(
             id = UUID.randomUUID(),
             name = "Pizzaria Arnalds",
             address = "Rua Mania, 34",
-            cnpj = "123212",
+            cnpj = "1266212",
             category = "Pizzaria",
             items = mutableSetOf(restaurantItem)
         )
@@ -248,67 +320,28 @@ class OrderRepositoryInMemoryTest {
             id = UUID.randomUUID(),
             items = listOf(orderItem),
             customer = customer,
-            restaurant = restaurant
+            restaurant = restaurant,
         )
-        repository.save(order)
+        orderRepository.save(order)
 
-        // Then
-        val trackingCodeSize: Int = order.trackingCode.length
-        assertEquals(10, trackingCodeSize)
-    }
+        val deliveryman = Deliveryman(id = UUID.randomUUID(), name = "John", phone = "987654", vehicle = "Bike")
+        deliverymanRepository.save(deliveryman)
 
-    @Test
-    fun `should find a specific order`() {
-        // Given
-        val restaurantItemId = UUID.randomUUID()
-        val restaurantId = UUID.randomUUID()
-        val customerId = UUID.randomUUID()
-        val orderId = UUID.randomUUID()
-
-        val restaurantItem = RestaurantItem(id = restaurantItemId, name = "Pizza Quatro Queijos", price = 49.60)
-        val restaurant = Restaurant(
-            id = restaurantId,
-            name = "Pizzaria Arnalds",
-            address = "Rua Mania, 34",
-            cnpj = "123212",
-            category = "Pizzaria",
-            items = mutableSetOf(restaurantItem)
+        val route = Route(
+            id = UUID.randomUUID(),
+            destination = "Rua das Flores, 123",
+            deliveryman = deliveryman,
+            order = order,
         )
-        restaurantRepository.save(restaurant)
-
-        val customer = Customer(id = customerId, name = "Ze", phone = "123456", address = "São João, 45")
-        customerRepository.save(customer)
-
-        val orderItem = OrderItem(restaurantItem = restaurantItem, quantity = 2)
-        val order = Order(
-            id = orderId,
-            items = listOf(orderItem),
-            customer = customer,
-            restaurant = restaurant
-        )
-
-        repository.save(order)
+        repository.save(route)
 
         // When
-        val result = repository.findOne(order.id)
+        val result = repository.findOneByTrackingCode(order.trackingCode)
 
         // Then
-        assertEquals(order.id, result.id)
-        assertEquals(order.customer.id, result.customer.id)
-        assertEquals(order.restaurant.id, result.restaurant.id)
-        assertEquals(order.items.size, result.items.size)
-        assertTrue(result.items.any { it.restaurantItem.id == restaurantItemId && it.quantity == orderItem.quantity })
-    }
-
-    private fun clearDatabase() {
-        val connection = DatabaseConfig.getConnection()
-        connection.use { connection ->
-            val statement = connection.createStatement()
-            statement.executeUpdate("DELETE FROM order_item")
-            statement.executeUpdate("DELETE FROM orders")
-            statement.executeUpdate("DELETE FROM restaurant_item")
-            statement.executeUpdate("DELETE FROM restaurant")
-            statement.executeUpdate("DELETE FROM customer")
-        }
+        assertEquals(route.id, result.id)
+        assertEquals(route.destination, result.destination)
+        assertEquals(route.deliveryman.id, result.deliveryman.id)
+        assertEquals(route.order.id, result.order.id)
     }
 }
