@@ -27,10 +27,10 @@ class OrderController(
 
     }
 
-    @PostMapping("/cancel/{trackingCode}")
-    fun cancelOrder(@PathVariable trackingCode: String): ResponseEntity<String> {
+    @PostMapping("/cancel")
+    fun cancelOrder(@RequestParam("trackingCode", required = true) trackingCode: String): ResponseEntity<Unit> {
         orderService.cancel(trackingCode)
-        return ResponseEntity.ok("Pedido com código $trackingCode foi cancelado com sucesso.")
+        return ResponseEntity.accepted().build()
     }
 
     @GetMapping("/{orderId}")
