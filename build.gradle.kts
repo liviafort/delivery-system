@@ -16,9 +16,11 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-jdbc")
+    runtimeOnly("org.postgresql:postgresql:42.7.2")
+
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("io.mockk:mockk:1.13.11")
-    implementation("org.postgresql:postgresql:42.7.2")
 }
 
 tasks.test {

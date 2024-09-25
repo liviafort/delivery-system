@@ -10,11 +10,12 @@ import br.com.liviafort.deliverysystem.repository.deliveryman.DeliverymanReposit
 import br.com.liviafort.deliverysystem.repository.order.OrderRepositoryImpl
 import br.com.liviafort.deliverysystem.repository.restaurant.RestaurantRepositoryImpl
 import br.com.liviafort.deliverysystem.repository.route.RouteRepositoryImpl
+import org.springframework.jdbc.core.JdbcTemplate
 
 object DependencyContainer {
-    val customerRepository: CustomerRepository by lazy { CustomerRepositoryImpl() }
-    val restaurantRepository: RestaurantRepository by lazy { RestaurantRepositoryImpl() }
-    val deliverymanRepository: DeliverymanRepository by lazy { DeliverymanRepositoryImpl() }
-    val orderRepository: OrderRepository by lazy { OrderRepositoryImpl(restaurantRepository, customerRepository) }
-    val routeRepository: RouteRepository by lazy { RouteRepositoryImpl(deliverymanRepository, orderRepository)}
+    val customerRepository: CustomerRepository by lazy { CustomerRepositoryImpl(JdbcTemplate()) }
+    val restaurantRepository: RestaurantRepository by lazy { RestaurantRepositoryImpl(JdbcTemplate()) }
+    val deliverymanRepository: DeliverymanRepository by lazy { DeliverymanRepositoryImpl(JdbcTemplate()) }
+    val orderRepository: OrderRepository by lazy { OrderRepositoryImpl(JdbcTemplate(), restaurantRepository, customerRepository) }
+    val routeRepository: RouteRepository by lazy { RouteRepositoryImpl(JdbcTemplate(), deliverymanRepository, orderRepository)}
 }

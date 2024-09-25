@@ -2,11 +2,13 @@ package br.com.liviafort.deliverysystem.repository.customer
 
 import br.com.liviafort.deliverysystem.domain.customer.Customer
 import br.com.liviafort.deliverysystem.domain.customer.CustomerRepository
+import org.springframework.context.annotation.Primary
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Repository
 import java.util.UUID
 
+@Primary
 @Repository
 class CustomerRepositoryImpl(
     private val jdbcTemplate: JdbcTemplate
