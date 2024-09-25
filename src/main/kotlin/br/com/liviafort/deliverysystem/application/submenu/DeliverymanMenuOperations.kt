@@ -3,8 +3,6 @@ package br.com.liviafort.deliverysystem.application.submenu
 import br.com.liviafort.deliverysystem.di.DependencyContainer
 import br.com.liviafort.deliverysystem.domain.deliveryman.Deliveryman
 import br.com.liviafort.deliverysystem.domain.deliveryman.DeliverymanServiceImpl
-import br.com.liviafort.deliverysystem.repository.deliveryman.DeliverymanRepositoryInMemory
-import java.util.UUID
 
 class DeliverymanMenuOperations {
     private val deliverymanService = DeliverymanServiceImpl(DependencyContainer.deliverymanRepository)

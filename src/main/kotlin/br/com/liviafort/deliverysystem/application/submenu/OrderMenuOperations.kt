@@ -5,9 +5,6 @@ import br.com.liviafort.deliverysystem.domain.order.Order
 import br.com.liviafort.deliverysystem.domain.order.OrderItem
 import br.com.liviafort.deliverysystem.domain.order.OrderServiceImpl
 import br.com.liviafort.deliverysystem.domain.restaurant.RestaurantItem
-import br.com.liviafort.deliverysystem.repository.customer.CustomerRepositoryInMemory
-import br.com.liviafort.deliverysystem.repository.order.OrderRepositoryInMemory
-import br.com.liviafort.deliverysystem.repository.restaurant.RestaurantRepositoryInMemory
 
 class OrderMenuOperations {
     private val orderService = OrderServiceImpl(DependencyContainer.orderRepository)

@@ -1,24 +1,32 @@
 package br.com.liviafort.deliverysystem.application.resources
 
-import br.com.liviafort.deliverysystem.di.DependencyContainer
 import br.com.liviafort.deliverysystem.domain.customer.Customer
-import br.com.liviafort.deliverysystem.domain.customer.CustomerServiceImpl
+import br.com.liviafort.deliverysystem.domain.customer.CustomerService
 import br.com.liviafort.deliverysystem.domain.deliveryman.Deliveryman
-import br.com.liviafort.deliverysystem.domain.deliveryman.DeliverymanServiceImpl
+import br.com.liviafort.deliverysystem.domain.deliveryman.DeliverymanService
 import br.com.liviafort.deliverysystem.domain.restaurant.Restaurant
 import br.com.liviafort.deliverysystem.domain.restaurant.RestaurantItem
-import br.com.liviafort.deliverysystem.domain.restaurant.RestaurantServiceImpl
+import br.com.liviafort.deliverysystem.domain.restaurant.RestaurantService
+import org.springframework.stereotype.Component
 
-
-class ReusableComponents() {
-    private val customerService = CustomerServiceImpl(DependencyContainer.customerRepository)
-    private val restaurantService = RestaurantServiceImpl(DependencyContainer.restaurantRepository)
-    private val deliverymanService = DeliverymanServiceImpl(DependencyContainer.deliverymanRepository)
+@Component
+class ReusableComponents(
+    private val customerService: CustomerService,
+    private val restaurantService: RestaurantService,
+    private val deliverymanService: DeliverymanService,
+) {
+//    private val customerService = CustomerServiceImpl(DependencyContainer.customerRepository)
+//    private val restaurantService = RestaurantServiceImpl(DependencyContainer.restaurantRepository)
+//    private val deliverymanService = DeliverymanServiceImpl(DependencyContainer.deliverymanRepository)
 
     init {
-        createRestaurant()
-        createCustomer()
-        createDeliveryman()
+        try {
+            createRestaurant()
+            createCustomer()
+            createDeliveryman()
+        } catch (e: Exception) {
+            // do nothing
+        }
     }
 
     private fun createRestaurant() {

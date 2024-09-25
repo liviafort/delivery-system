@@ -1,20 +1,18 @@
 package br.com.liviafort.deliverysystem.repository.customer
 
-import br.com.liviafort.deliverysystem.config.DatabaseConfig
 import br.com.liviafort.deliverysystem.domain.customer.Customer
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
-class CustomerRepositoryInMemoryIntegratedTest {
-    private val repository = CustomerRepositoryInMemory()
+@Transactional
+class CustomerRepositoryImplIntegrationTest {
 
-    @BeforeEach
-    fun setup() {
-        clearDatabase()
-    }
+    @Autowired
+    private lateinit var repository: CustomerRepositoryImpl
 
     @Test
     fun `should persist a customer`() {
@@ -66,13 +64,5 @@ class CustomerRepositoryInMemoryIntegratedTest {
         // Then
         assertEquals(2, customers.size)
         assertTrue(customers.containsAll(listOf(customer, customer2)))
-    }
-
-    private fun clearDatabase() {
-        val connection = DatabaseConfig.getConnection()
-        connection.use { connection ->
-            val statement = connection.createStatement()
-            statement.executeUpdate("DELETE FROM customer")
-        }
     }
 }

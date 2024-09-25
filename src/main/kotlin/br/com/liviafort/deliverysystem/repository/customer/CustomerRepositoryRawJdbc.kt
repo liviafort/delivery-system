@@ -3,13 +3,12 @@ package br.com.liviafort.deliverysystem.repository.customer
 import br.com.liviafort.deliverysystem.config.DatabaseConfig
 import br.com.liviafort.deliverysystem.domain.customer.Customer
 import br.com.liviafort.deliverysystem.domain.customer.CustomerRepository
-import java.sql.SQLException
-import java.sql.Statement
-import java.util.UUID
 import org.springframework.stereotype.Repository
+import java.sql.SQLException
+import java.util.UUID
 
 @Repository
-class CustomerRepositoryInMemory: CustomerRepository {
+class CustomerRepositoryRawJdbc : CustomerRepository {
 
     override fun save(customer: Customer) {
         val sql = "INSERT INTO customer (id, phone, name, address) VALUES (?, ?, ?, ?)"
